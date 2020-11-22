@@ -25,6 +25,11 @@ func remove(slice []Customer, i int) []Customer {
 }
 
 func processCustomer(queue Queue) {
+	if !queue.till.open {
+		fmt.Printf("Till %s is currently closed\n", queue.till.till)
+		return
+	}
+
 	if len(queue.inQueue) == 0 {
 		fmt.Printf("No customers currently in queue at till %s\n", queue.till.till)
 		return
