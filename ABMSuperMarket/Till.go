@@ -5,16 +5,12 @@ import (
 	"time"
 )
 
-//5 standard, 1 fast till
-var allTills = make([]Till, 6)
-
 //Queue has a till and item processing time and an array
 type Queue struct {
 	itemProcessingTime int
 	inQueue            []Customer
 }
 
-//Till logic if > 6 , then add till part
 type Till struct {
 	name        string
 	isFastTrack bool
@@ -25,6 +21,7 @@ type Till struct {
 func openTill(t Till) {
 	t.isOpen = true
 }
+
 func closeTill(t Till) {
 	t.isOpen = false
 }
