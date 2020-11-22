@@ -6,149 +6,109 @@ import (
 	"time"
 )
 
-var timeofday int
-var maxcapacity int
-var handsanitizerremaining int
-var DaysRemaining int
-func timeloop() {
-
-	timeofday = timeofday + 1
-
-	if timeofday == 1440 {
-
-		timeofday=0
-		DaysRemaining=DaysRemaining-1
-
-	
-    }
+type Shop struct {
+	timeOfDay              int
+	maxCapacity            int
+	handSanitizerRemaining int
+	daysRemaining          int
+	tills                  []Till
 }
+
+var shop Shop
+
+type Customer struct {
+	name        string
+	patience    int
+	isAntiMask  bool
+	items       int
+	queueNumber int
+}
+
+func addCustomer(setItems int, setQueueNumber int) *Customer {
+	temp := Customer{items: setItems}
+	temp.queueNumber = setQueueNumber
+	return &temp
+}
+
+func newCustomer() {
+	//customerSlice := make([]Customer, 20)
+}
+
+func timeLoop() {
+	shop.timeOfDay = shop.timeOfDay + 1
+	if shop.timeOfDay == 1440 {
+		shop.timeOfDay = 0
+		shop.daysRemaining = shop.daysRemaining - 1
+	}
+}
+
 func setCovid() {
 	rand.Seed(time.Now().UnixNano())
 	min := 1
 	max := 5
 	covidlv := rand.Intn((max - min + 1) + min)
 
-
-	if covidlv == 0 {
-
-		maxcapacity = 100
-
+	switch covidlv {
+	case 1:
+		shop.maxCapacity = 100
+	case 2:
+		shop.maxCapacity = 75
+	case 3:
+		shop.maxCapacity = 50
+	case 4:
+		shop.maxCapacity = 25
+	case 5:
+		shop.maxCapacity = 10
+	default:
+		shop.maxCapacity = 100
 	}
-	if covidlv == 1 {
-		maxcapacity = 100
-	}
-
-	if covidlv == 2 {
-
-		maxcapacity = 75
-
-	}
-	if covidlv == 3 {
-
-		maxcapacity = 50
-
-	}
-
-	if covidlv == 4 {
-
-		maxcapacity = 25
-
-	}
-
-	if covidlv == 5 {
-
-		maxcapacity = 10
-
-	}
-
-	
-
 }
 
-func openshop() {
-
-
-     
+func openShop() {
 	fmt.Println("Tills opening")
-	
-	if DaysRemaining==0{
-	    setCovid()
-	    
-	    DaysRemaining=7
-	}
-	
-	for timeofday < 1320 && timeofday >= 540 {
 
+	if shop.daysRemaining == 0 {
+		setCovid()
+		shop.daysRemaining = 7
+	}
+
+	for shop.timeOfDay < 1320 && shop.timeOfDay >= 540 {
 		customer()
-		handsanitizer()
-		timeloop()
-
+		handSanitizer()
+		timeLoop()
 	}
-   if timeofday == 1320 {
 
-		closeshop()
+	if shop.timeOfDay == 1320 {
+		closeShop()
 	}
 }
 
 func customer() {
-
-	
-	handsanitizerremaining = handsanitizerremaining - 1
+	shop.handSanitizerRemaining = shop.handSanitizerRemaining - 1
 }
 
-func closeshop() {
-
+func closeShop() {
 	fmt.Println("no more customers allowed")
 	fmt.Println("processremaining customers")
 	fmt.Println("close all tills")
 	fmt.Println("close shop")
-	
-		for timeofday >= 1320 || timeofday < 540 {
 
+	for shop.timeOfDay >= 1320 || shop.timeOfDay < 540 {
 		fmt.Println("shop is closed")
-		
-      timeloop()
-	
+		timeLoop()
 	}
-	
-	 if timeofday == 540 {
 
-<<<<<<< HEAD
-=======
-	openshop()
-	}
-	
-}
-
-//func closeAllTills() {
-//	for i := 0; i < len(allTills); i++ {
-//		allTills[i].isOpen = false
-//	}
-//}
-
-//func getTills() []Till {
-//	return allTills
-//}
-
->>>>>>> d281fe5eaa641165b5c1b3bb13dcf7d504920c72
-func handsanitizer() {
-
-	if handsanitizerremaining == 0 {
-
-		fmt.Println("refiling hand sanitizer")
-		handsanitizerremaining = 100
+	if shop.timeOfDay == 540 {
+		openShop()
 	}
 
 }
 
-func main() {
-	timeofday = 540
-
-	handsanitizerremaining = 100
-
-
-	fmt.Println(maxcapacity)
-    openshop()
+func handSanitizer() {
+	if shop.handSanitizerRemaining == 0 {
+		fmt.Println("Refilling hand sanitizer")
+		shop.handSanitizerRemaining = 100
+	}
 
 }
 
@@ -225,24 +185,10 @@ func processCustomer(till Till) {
 	//remove first element in customer slice from queue and maintain order
 	till.queue.inQueue = remove(till.queue.inQueue, 0)
 }
-type Customer struct {
-	name        string
-	patience    int
-	isAntiMask  bool
-	items       int
-	queueNumber int
+
+func main() {
+	shop.timeOfDay = 540
+	shop.handSanitizerRemaining = 100
+	fmt.Println(shop.maxCapacity)
+	openShop()
 }
-
-func addCustomer(setItems int, setQueueNumber int) *Customer {
-	temp := Customer{items: setItems}
-	temp.queueNumber = setQueueNumber
-
-	return &temp
-}
-
-func newCustomer() {
-	//customerSlice := make([]Customer, 20)
-
-}
-
-
