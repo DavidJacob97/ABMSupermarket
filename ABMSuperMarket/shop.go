@@ -76,6 +76,7 @@ func openShop() {
 		customer()
 		handSanitizer()
 		timeLoop()
+		time.Sleep(time.Second)
 	}
 
 	if shop.timeOfDay == 1320 {
@@ -96,6 +97,7 @@ func closeShop() {
 	for shop.timeOfDay >= 1320 || shop.timeOfDay < 540 {
 		fmt.Println("shop is closed")
 		timeLoop()
+		time.Sleep(time.Second)
 	}
 
 	if shop.timeOfDay == 540 {
