@@ -1,27 +1,22 @@
 package main
 
-import (
-   "fmt"
-)
-
 // Customer is a person buying food
 type Customer struct {
-	name string
-	patience   int
-	isAntiMask bool
-	items      int
-	queueNumber  int
+	name        string
+	patience    int
+	isAntiMask  bool
+	items       int
+	queueNumber int
 }
 
-func addCustomer (setItems int, setQueNumber int) *customer {
-	temp := customer{items: setItems}
-	temp.queNumber = setQueNumber
+func addCustomer(setItems int, setQueueNumber int) *Customer {
+	temp := Customer{items: setItems}
+	temp.queueNumber = setQueueNumber
 
 	return &temp
 }
 
 func main() {
-	customerSlice := make([]customer, 20)
-
+	customerSlice := make([]Customer, 20)
 
 }
