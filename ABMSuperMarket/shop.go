@@ -78,16 +78,6 @@ func closeshop() {
 
 }
 
-func closeAllTills() {
-	for i := 0; i < len(allTills); i++ {
-		allTills[i].isOpen = false
-	}
-}
-
-func getTills() []Till {
-	return allTills
-}
-
 func handsanitizer() {
 
 	if handsanitizerremaining == 0 {
