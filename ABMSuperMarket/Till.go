@@ -2,7 +2,7 @@ package main
 
 var allTills = make([]int, 6)
 
-type tills struct {
+type Till struct {
 	queueLength int
 	open        bool
 	closed      bool
