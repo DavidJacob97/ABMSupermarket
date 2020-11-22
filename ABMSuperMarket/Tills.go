@@ -8,11 +8,6 @@ type tills struct {
 	closed      bool
 }
 
-type customer struct {
-	patience     int
-	numFoodItems int
-}
-
 func openTill() {
 	allTills = allTills[:1]
 }
@@ -22,6 +17,10 @@ func closeTill() {
 
 func closeAllTills() {
 	allTills = allTills[:0]
+}
+
+func getTills() []int {
+	return allTills
 }
 
 func main() {
