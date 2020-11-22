@@ -1,6 +1,6 @@
 package main
 
-var allTills = make([]int, 5)
+var allTills = make([]int, 6)
 
 type tills struct {
 	queueLength int
