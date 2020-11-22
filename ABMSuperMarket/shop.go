@@ -64,6 +64,8 @@ func setCovid() {
 	default:
 		shop.maxCapacity = 100
 	}
+
+	fmt.Println(shop.maxCapacity)
 }
 
 func openShop() {
@@ -78,7 +80,7 @@ func openShop() {
 		customer()
 		handSanitizer()
 		timeLoop()
-		time.Sleep(time.Second)
+		time.Sleep(5 * time.Millisecond)
 	}
 
 	if shop.timeOfDay == 1320 {
@@ -99,7 +101,7 @@ func closeShop() {
 	for shop.timeOfDay >= 1320 || shop.timeOfDay < 540 {
 		fmt.Println("shop is closed")
 		timeLoop()
-		time.Sleep(time.Second)
+		time.Sleep(5 * time.Millisecond)
 	}
 
 	if shop.timeOfDay == 540 {
@@ -195,6 +197,5 @@ func processCustomer(till Till) {
 func main() {
 	shop.timeOfDay = 540
 	shop.handSanitizerRemaining = 100
-	fmt.Println(shop.maxCapacity)
 	openShop()
 }
