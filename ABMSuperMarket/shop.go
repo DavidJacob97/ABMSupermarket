@@ -26,6 +26,7 @@ type Customer struct {
 	queueNumber int
 }
 
+// hopefully finaly everithing work
 func addCustomer(setItems int, setQueueNumber int) *Customer {
 	temp := Customer{items: setItems}
 	temp.queueNumber = setQueueNumber
