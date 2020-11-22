@@ -2,7 +2,6 @@ package main
 
 import (
    "fmt"
-   "time"
 )
 
 // Customer is a person buying food
@@ -18,7 +17,7 @@ func addCustomer (setItems int, setQueNumber int) *customer {
 	temp := customer{items: setItems}
 	temp.queNumber = setQueNumber
 
-	return temp
+	return &temp
 }
 
 func main() {
