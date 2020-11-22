@@ -113,6 +113,8 @@ func closeshop() {
 	
 	 if timeofday == 540 {
 
+<<<<<<< HEAD
+=======
 	openshop()
 	}
 	
@@ -128,6 +130,7 @@ func closeshop() {
 //	return allTills
 //}
 
+>>>>>>> d281fe5eaa641165b5c1b3bb13dcf7d504920c72
 func handsanitizer() {
 
 	if handsanitizerremaining == 0 {

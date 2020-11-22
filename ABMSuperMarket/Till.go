@@ -26,6 +26,13 @@ func closeTill(t Till) {
 	t.isOpen = false
 }
 
+func closeAllTills(tills Till) {
+	var allTills [6]Till
+	for i := 0; i < len(allTills); i++ {
+		allTills[i].isOpen = false
+	}
+}
+
 /*
 func getAvgQueueNum() int {
 	sum := 0
