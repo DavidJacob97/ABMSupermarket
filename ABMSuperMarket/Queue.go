@@ -6,7 +6,6 @@ import (
 )
 
 type Queue struct {
-	count              int
 	itemProcessingTime int
 	till               Till
 	inQueue            []Customer
@@ -14,7 +13,6 @@ type Queue struct {
 
 func newQueue(till Till, itemProcessingTime int) *Queue {
 	q := Queue{}
-	q.count = 0
 	q.itemProcessingTime = 3
 	q.till = till
 	return &q

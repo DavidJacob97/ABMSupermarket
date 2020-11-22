@@ -16,7 +16,7 @@ func addCustomer(setItems int, setQueueNumber int) *Customer {
 	return &temp
 }
 
-func main() {
-	customerSlice := make([]Customer, 20)
+func newCustomer() {
+	//customerSlice := make([]Customer, 20)
 
 }

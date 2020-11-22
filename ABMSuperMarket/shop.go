@@ -89,6 +89,7 @@ func handsanitizer(){
     }
     
 }
+
 func main() {
     timeofday=540
     
@@ -119,7 +120,4 @@ func main() {
 		fmt.Println("shop is closed")
 		
 	}
-     
-     
- 
 }

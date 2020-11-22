@@ -24,7 +24,3 @@ func closeAllTills() {
 func getTills() []int {
 	return allTills
 }
-
-func main() {
-
-}
