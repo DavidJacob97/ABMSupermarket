@@ -17,7 +17,7 @@ func addCustomer (setItems int, setQueNumber int) *customer {
 	temp := customer{items: setItems}
 	temp.queNumber = setQueNumber
 
-	return temp
+	return &temp
 }
 
 func main() {
