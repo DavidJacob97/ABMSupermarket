@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+//Queue has a till and item processing time and an array
 type Queue struct {
 	itemProcessingTime int
 	till               Till

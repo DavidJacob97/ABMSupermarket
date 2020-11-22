@@ -1,7 +1,8 @@
 package main
 
-var allTills = make([]int, 6)
+var allTills = make([]Till, 6)
 
+//Till logic if > 6 , then add till part
 type Till struct {
 	till        string
 	isFastTrack bool
@@ -21,6 +22,15 @@ func closeAllTills() {
 	allTills = allTills[:0]
 }
 
-func getTills() []int {
+func getTills() []Till {
 	return allTills
+}
+
+func getAvgQueueNum() int {
+	sum := 0
+	for i := 0; i < len(allTills); i++ {
+		sum += allTills[i].queueLength
+	}
+	avgQueueLength := sum / len(allTills)
+	return avgQueueLength
 }
