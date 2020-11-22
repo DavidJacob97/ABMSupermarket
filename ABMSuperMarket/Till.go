@@ -1,5 +1,6 @@
 package main
 
+//5 standard, 1 fast till
 var allTills = make([]Till, 6)
 
 //Till logic if > 6 , then add till part
@@ -11,15 +12,20 @@ type Till struct {
 	closed      bool
 }
 
-func openTill() {
-	allTills = allTills[:1]
+func openTill(t Till) {
+	t.open = true
+	t.closed = false
 }
-func closeTill() {
-	allTills = allTills[1:]
+func closeTill(t Till) {
+	t.open = false
+	t.closed = true
 }
 
 func closeAllTills() {
-	allTills = allTills[:0]
+	for i := 0; i < len(allTills); i++ {
+		allTills[i].closed = true
+		allTills[i].open = false
+	}
 }
 
 func getTills() []Till {
