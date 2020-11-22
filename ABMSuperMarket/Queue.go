@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 type Queue struct {
 	count              int
 	itemProcessingTime int
@@ -15,6 +17,8 @@ func newQueue(till Till, itemProcessingTime int) *Queue {
 	return &q
 }
 
-func processCustomer(Customer) {
+func processCustomer(queue Queue) {
+	//process the first customer in queue
+	fmt.Printf("Processing customer %s at till %s\nNumber of items: %d\n", queue.inQueue[0].name, queue.till.till, queue.inQueue[0].items)
 
 }

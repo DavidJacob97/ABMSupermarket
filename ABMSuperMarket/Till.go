@@ -3,6 +3,8 @@ package main
 var allTills = make([]int, 6)
 
 type Till struct {
+	till        string
+	isFastTrack bool
 	queueLength int
 	open        bool
 	closed      bool
