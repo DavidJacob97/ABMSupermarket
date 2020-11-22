@@ -2,7 +2,6 @@ package main
 
 import (
    "fmt"
-   "time"
 )
 
 // Customer is a person buying food
