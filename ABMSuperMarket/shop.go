@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+//Shop works of the time, handsanitizer,
 type Shop struct {
 	timeOfDay              int
 	maxCapacity            int
@@ -16,6 +17,7 @@ type Shop struct {
 
 var shop Shop
 
+//Customer has patience var, possibly not enter cause of a mask, carries items
 type Customer struct {
 	name        string
 	patience    int
@@ -114,11 +116,13 @@ func handSanitizer() {
 
 }
 
+// Queue has processing item time and Customers array queue
 type Queue struct {
 	itemProcessingTime int
 	inQueue            []Customer
 }
 
+//Till has a type, can be opened and contains a queue
 type Till struct {
 	name        string
 	isFastTrack bool
