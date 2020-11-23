@@ -6,15 +6,8 @@ import (
 	"time"
 )
 
-<<<<<<< HEAD
 var foreNames = []string{"Brian", "Evan", "Martin", "Robert"}
 var surNames = []string{"Hogarty", "Callaghan", "Miller", "Robson"}
-=======
-func init() {
-	// Random seed
-	rand.Seed(time.Now().UTC().UnixNano())
-}
->>>>>>> de003e7eb72b162ab7dd719d10f078bf5e9af0c1
 
 //Shop works of the time, handsanitizer,
 type Shop struct {
@@ -35,14 +28,7 @@ type Customer struct {
 	items      int
 }
 
-// hopefully finaly everithing work
-func (c *Customer) addCustomer(setItems int) {
-	c.items = setItems
-}
-
-func newCustomer() {
-	//customerSlice := make([]Customer, 20)
-}
+var allCustomers []Customer
 
 func randomPause(max int) {
 	time.Sleep(time.Millisecond * time.Duration(rand.Intn(max*1000)))
@@ -184,19 +170,28 @@ func remove(slice []Customer, i int) []Customer {
 }
 
 func generateCustomers() {
-	//for {
-	rand.Seed(time.Now().UnixNano())
-	r := rand.Intn(len(foreNames))
-	foreName := foreNames[r]
+	for {
+		rand.Seed(time.Now().UnixNano())
+		r := rand.Intn(len(foreNames))
+		foreName := foreNames[r]
 
-	r = rand.Intn(len(surNames))
+		r = rand.Intn(len(surNames))
 
-	lastName := surNames[r]
-	name := foreName + " " + lastName
+		lastName := surNames[r]
+		name := foreName + " " + lastName
 
-	fmt.Println(name)
+		customer := Customer{name: name}
+		customer.isAntiMask = false //need some code in some chance
+		customer.items = 5          //to be generated randomly
+		customer.patience = 0       //to be generated randomly
 
-	//}
+		mutex.Lock()
+		allCustomers = append(allCustomers, customer)
+		mutex.Unlock()
+
+		//generate new customer every 5 sec
+		time.Sleep(time.Duration(5 * time.Second)
+	}
 }
 
 func processCustomer(till Till) {
@@ -225,6 +220,8 @@ func processCustomer(till Till) {
 }
 
 func main() {
+	var mutex = &sync.Mutex{}
+
 	generateCustomers()
 
 	shop.timeOfDay = 540
