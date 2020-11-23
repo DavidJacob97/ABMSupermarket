@@ -6,6 +6,9 @@ import (
 	"time"
 )
 
+var foreNames = []string{"Brian", "Evan", "Martin", "Robert"}
+var surNames = []string{"Hogarty", "Callaghan", "Miller", "Robson"}
+
 //Shop works of the time, handsanitizer,
 type Shop struct {
 	timeOfDay              int
@@ -169,6 +172,22 @@ func remove(slice []Customer, i int) []Customer {
 	return append(slice[:i], slice[i+1:]...)
 }
 
+func generateCustomers() {
+	//for {
+	rand.Seed(time.Now().UnixNano())
+	r := rand.Intn(len(foreNames))
+	foreName := foreNames[r]
+
+	r = rand.Intn(len(surNames))
+
+	lastName := surNames[r]
+	name := foreName + " " + lastName
+
+	fmt.Println(name)
+
+	//}
+}
+
 func processCustomer(till Till) {
 	if !till.isOpen {
 		fmt.Printf("Till %s is currently closed\n", till.name)
@@ -195,7 +214,9 @@ func processCustomer(till Till) {
 }
 
 func main() {
+	generateCustomers()
+
 	shop.timeOfDay = 540
 	shop.handSanitizerRemaining = 100
-	openShop()
+	//openShop()
 }
