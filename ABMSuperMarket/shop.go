@@ -19,17 +19,16 @@ var shop Shop
 
 //Customer has patience var, possibly not enter cause of a mask, carries items
 type Customer struct {
-	name        string
-	patience    int
-	isAntiMask  bool
-	items       int
-	queueNumber int
+	name       string
+	patience   int
+	isAntiMask bool
+	items      int
 }
 
 // hopefully finaly everithing work
 func addCustomer(setItems int, setQueueNumber int) *Customer {
 	temp := Customer{items: setItems}
-	temp.queueNumber = setQueueNumber
+	//temp.queueNumber = setQueueNumber
 	return &temp
 }
 
