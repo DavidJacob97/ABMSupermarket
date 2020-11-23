@@ -172,7 +172,7 @@ func remove(slice []Customer, i int) []Customer {
 	return append(slice[:i], slice[i+1:]...)
 }
 
-func generateCustomers() {
+func generateCustomers(wg *sync.WaitGroup) {
 	for {
 		rand.Seed(time.Now().UnixNano())
 		r := rand.Intn(len(foreNames))
@@ -191,13 +191,14 @@ func generateCustomers() {
 		mutex.Lock()
 		allCustomers = append(allCustomers, customer)
 		mutex.Unlock()
+		wg.Done()
 
 		//generate new customer every 5 sec
 		time.Sleep(time.Duration(5 * time.Second))
 	}
 }
 
-func testPrintAllCustomers() {
+func testPrintAllCustomers(wg *sync.WaitGroup) {
 	for {
 		fmt.Println("Customers in allCustomers:")
 		mutex.Lock()
@@ -205,6 +206,7 @@ func testPrintAllCustomers() {
 			fmt.Print(allCustomers[i].name + ", ")
 		}
 		mutex.Unlock()
+		wg.Done()
 		fmt.Println()
 
 		//print array every 10 secs
@@ -238,9 +240,10 @@ func processCustomer(till Till) {
 }
 
 func main() {
-	go testPrintAllCustomers()
-	go generateCustomers()
-
+	var wg sync.WaitGroup
+	wg.Add(2)
+	go testPrintAllCustomers(&wg)
+	go generateCustomers(&wg)
 	//shop.timeOfDay = 540
 	//shop.handSanitizerRemaining = 100
 	//openShop()
