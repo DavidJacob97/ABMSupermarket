@@ -3,16 +3,14 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"sync"
 	"time"
 )
 
+var mutex = &sync.Mutex{}
+
 var foreNames = []string{"Brian", "Evan", "Martin", "Robert"}
 var surNames = []string{"Hogarty", "Callaghan", "Miller", "Robson"}
-
-func init() {
-	// Random seed
-	rand.Seed(time.Now().UTC().UnixNano())
-}
 
 //Shop works of the time, handsanitizer,
 type Shop struct {
@@ -33,14 +31,7 @@ type Customer struct {
 	items      int
 }
 
-// hopefully finaly everithing work
-func (c *Customer) addCustomer(setItems int) {
-	c.items = setItems
-}
-
-func newCustomer() {
-	//customerSlice := make([]Customer, 20)
-}
+var allCustomers []Customer
 
 func randomPause(max int) {
 	time.Sleep(time.Millisecond * time.Duration(rand.Intn(max*1000)))
@@ -182,19 +173,41 @@ func remove(slice []Customer, i int) []Customer {
 }
 
 func generateCustomers() {
-	//for {
-	rand.Seed(time.Now().UnixNano())
-	r := rand.Intn(len(foreNames))
-	foreName := foreNames[r]
+	for {
+		rand.Seed(time.Now().UnixNano())
+		r := rand.Intn(len(foreNames))
+		foreName := foreNames[r]
 
-	r = rand.Intn(len(surNames))
+		r = rand.Intn(len(surNames))
 
-	lastName := surNames[r]
-	name := foreName + " " + lastName
+		lastName := surNames[r]
+		name := foreName + " " + lastName
 
-	fmt.Println(name)
+		customer := Customer{name: name}
+		customer.isAntiMask = false //need some code in some chance
+		customer.items = 5          //to be generated randomly
+		customer.patience = 0       //to be generated randomly
 
-	//}
+		mutex.Lock()
+		allCustomers = append(allCustomers, customer)
+		mutex.Unlock()
+
+		//generate new customer every 5 sec
+		time.Sleep(time.Duration(5 * time.Second))
+	}
+}
+
+func testPrintAllCustomers() {
+	for {
+		fmt.Println("Customers in allCustomers:")
+		for i := 0; i < len(allCustomers); i++ {
+			fmt.Print(allCustomers[i].name + ", ")
+		}
+		fmt.Println()
+
+		//print array every 10 secs
+		time.Sleep(time.Duration(10 * time.Second))
+	}
 }
 
 func processCustomer(till Till) {
@@ -223,9 +236,10 @@ func processCustomer(till Till) {
 }
 
 func main() {
-	generateCustomers()
+	go testPrintAllCustomers()
+	go generateCustomers()
 
-	shop.timeOfDay = 540
-	shop.handSanitizerRemaining = 100
+	//shop.timeOfDay = 540
+	//shop.handSanitizerRemaining = 100
 	//openShop()
 }
