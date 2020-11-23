@@ -26,10 +26,8 @@ type Customer struct {
 }
 
 // hopefully finaly everithing work
-func addCustomer(setItems int, setQueueNumber int) *Customer {
-	temp := Customer{items: setItems}
-	//temp.queueNumber = setQueueNumber
-	return &temp
+func (c *Customer) addCustomer(setItems int) {
+	c.items = setItems
 }
 
 func newCustomer() {
