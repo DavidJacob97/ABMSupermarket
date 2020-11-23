@@ -6,15 +6,13 @@ import (
 	"time"
 )
 
-<<<<<<< HEAD
 var foreNames = []string{"Brian", "Evan", "Martin", "Robert"}
 var surNames = []string{"Hogarty", "Callaghan", "Miller", "Robson"}
-=======
+
 func init() {
 	// Random seed
 	rand.Seed(time.Now().UTC().UnixNano())
 }
->>>>>>> de003e7eb72b162ab7dd719d10f078bf5e9af0c1
 
 //Shop works of the time, handsanitizer,
 type Shop struct {
