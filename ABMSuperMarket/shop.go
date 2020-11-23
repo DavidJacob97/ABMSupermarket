@@ -140,16 +140,18 @@ func closeTill(t Till) {
 	t.isOpen = false
 }
 
-/*
-func getAvgQueueNum() int {
-	sum := 0
-	for i := 0; i < len(allTills); i++ {
-		sum += allTills[i].queueLength
-	}
-	avgQueueLength := sum / len(allTills)
+/*func getAvgQueueLength()int {
+	sum :=
+	avgQueueLength := sum / len()
 	return avgQueueLength
 }
 */
+
+func getQueueLength(q1 Queue, q2 Queue, q3 Queue, q4 Queue, q5 Queue, q6 Queue) int {
+	queueLength := len(q1.inQueue)
+	return queueLength
+
+}
 
 func newQueue(itemProcessingTime int) *Queue {
 	q := Queue{}
