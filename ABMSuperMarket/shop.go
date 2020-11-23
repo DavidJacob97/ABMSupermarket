@@ -6,8 +6,15 @@ import (
 	"time"
 )
 
+<<<<<<< HEAD
 var foreNames = []string{"Brian", "Evan", "Martin", "Robert"}
 var surNames = []string{"Hogarty", "Callaghan", "Miller", "Robson"}
+=======
+func init() {
+	// Random seed
+	rand.Seed(time.Now().UTC().UnixNano())
+}
+>>>>>>> de003e7eb72b162ab7dd719d10f078bf5e9af0c1
 
 //Shop works of the time, handsanitizer,
 type Shop struct {
@@ -22,21 +29,23 @@ var shop Shop
 
 //Customer has patience var, possibly not enter cause of a mask, carries items
 type Customer struct {
-	name        string
-	patience    int
-	isAntiMask  bool
-	items       int
-	queueNumber int
+	name       string
+	patience   int
+	isAntiMask bool
+	items      int
 }
 
-func addCustomer(setItems int, setQueueNumber int) *Customer {
-	temp := Customer{items: setItems}
-	temp.queueNumber = setQueueNumber
-	return &temp
+// hopefully finaly everithing work
+func (c *Customer) addCustomer(setItems int) {
+	c.items = setItems
 }
 
 func newCustomer() {
 	//customerSlice := make([]Customer, 20)
+}
+
+func randomPause(max int) {
+	time.Sleep(time.Millisecond * time.Duration(rand.Intn(max*1000)))
 }
 
 func timeLoop() {
@@ -143,16 +152,18 @@ func closeTill(t Till) {
 	t.isOpen = false
 }
 
-/*
-func getAvgQueueNum() int {
-	sum := 0
-	for i := 0; i < len(allTills); i++ {
-		sum += allTills[i].queueLength
-	}
-	avgQueueLength := sum / len(allTills)
+/*func getAvgQueueLength()int {
+	sum :=
+	avgQueueLength := sum / len()
 	return avgQueueLength
 }
 */
+
+func getQueueLength(q1 Queue, q2 Queue, q3 Queue, q4 Queue, q5 Queue, q6 Queue) int {
+	queueLength := len(q1.inQueue)
+	return queueLength
+
+}
 
 func newQueue(itemProcessingTime int) *Queue {
 	q := Queue{}
