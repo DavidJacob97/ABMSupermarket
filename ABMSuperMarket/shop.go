@@ -200,9 +200,11 @@ func generateCustomers() {
 func testPrintAllCustomers() {
 	for {
 		fmt.Println("Customers in allCustomers:")
+		mutex.Lock()
 		for i := 0; i < len(allCustomers); i++ {
 			fmt.Print(allCustomers[i].name + ", ")
 		}
+		mutex.Unlock()
 		fmt.Println()
 
 		//print array every 10 secs
