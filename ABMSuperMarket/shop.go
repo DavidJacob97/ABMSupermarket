@@ -6,6 +6,11 @@ import (
 	"time"
 )
 
+func init() {
+	// Random seed
+	rand.Seed(time.Now().UTC().UnixNano())
+}
+
 //Shop works of the time, handsanitizer,
 type Shop struct {
 	timeOfDay              int
@@ -19,21 +24,23 @@ var shop Shop
 
 //Customer has patience var, possibly not enter cause of a mask, carries items
 type Customer struct {
-	name        string
-	patience    int
-	isAntiMask  bool
-	items       int
-	queueNumber int
+	name       string
+	patience   int
+	isAntiMask bool
+	items      int
 }
 
-func addCustomer(setItems int, setQueueNumber int) *Customer {
-	temp := Customer{items: setItems}
-	temp.queueNumber = setQueueNumber
-	return &temp
+// hopefully finaly everithing work
+func (c *Customer) addCustomer(setItems int) {
+	c.items = setItems
 }
 
 func newCustomer() {
 	//customerSlice := make([]Customer, 20)
+}
+
+func randomPause(max int) {
+	time.Sleep(time.Millisecond * time.Duration(rand.Intn(max*1000)))
 }
 
 func timeLoop() {
