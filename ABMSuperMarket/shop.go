@@ -7,6 +7,8 @@ import (
 	"time"
 )
 
+var mutex = &sync.Mutex{}
+
 var foreNames = []string{"Brian", "Evan", "Martin", "Robert"}
 var surNames = []string{"Hogarty", "Callaghan", "Miller", "Robson"}
 
@@ -195,6 +197,19 @@ func generateCustomers() {
 	}
 }
 
+func testPrintAllCustomers() {
+	for {
+		fmt.Println("Customers in allCustomers:")
+		for i := 0; i < len(allCustomers); i++ {
+			fmt.Print(allCustomers[i].name + ", ")
+		}
+		fmt.Println()
+
+		//print array every 10 secs
+		time.Sleep(time.Duration(10 * time.Second))
+	}
+}
+
 func processCustomer(till Till) {
 	if !till.isOpen {
 		fmt.Printf("Till %s is currently closed\n", till.name)
@@ -221,11 +236,10 @@ func processCustomer(till Till) {
 }
 
 func main() {
-	var mutex = &sync.Mutex{}
+	go testPrintAllCustomers()
+	go generateCustomers()
 
-	generateCustomers()
-
-	shop.timeOfDay = 540
-	shop.handSanitizerRemaining = 100
+	//shop.timeOfDay = 540
+	//shop.handSanitizerRemaining = 100
 	//openShop()
 }
