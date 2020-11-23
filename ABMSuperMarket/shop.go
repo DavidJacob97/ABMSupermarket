@@ -6,6 +6,11 @@ import (
 	"time"
 )
 
+func init() {
+	// Random seed
+	rand.Seed(time.Now().UTC().UnixNano())
+}
+
 //Shop works of the time, handsanitizer,
 type Shop struct {
 	timeOfDay              int
@@ -32,6 +37,10 @@ func (c *Customer) addCustomer(setItems int) {
 
 func newCustomer() {
 	//customerSlice := make([]Customer, 20)
+}
+
+func randomPause(max int) {
+	time.Sleep(time.Millisecond * time.Duration(rand.Intn(max*1000)))
 }
 
 func timeLoop() {
