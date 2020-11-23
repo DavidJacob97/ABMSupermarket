@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"sync"
 	"time"
 )
 
@@ -190,7 +191,7 @@ func generateCustomers() {
 		mutex.Unlock()
 
 		//generate new customer every 5 sec
-		time.Sleep(time.Duration(5 * time.Second)
+		time.Sleep(time.Duration(5 * time.Second))
 	}
 }
 
