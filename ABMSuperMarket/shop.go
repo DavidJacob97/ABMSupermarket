@@ -138,16 +138,16 @@ func closeTill(t Till) {
 	t.isOpen = false
 }
 
-/*func getAvgQueueLength()int {
-	sum :=
-	avgQueueLength := sum / len()
-	return avgQueueLength
-}
-*/
+func getAvgQueueLength(q1 Queue, q2 Queue, q3 Queue, q4 Queue, q5 Queue, q6 Queue) int {
 
-func getQueueLength(q1 Queue, q2 Queue, q3 Queue, q4 Queue, q5 Queue, q6 Queue) int {
-	queueLength := len(q1.inQueue)
-	return queueLength
+	allQueues := []Queue{q1, q2, q3, q4, q5, q6}
+	totalQueueLength := 0
+	for i := 0; i < 6; i++ {
+		totalQueueLength = len(allQueues[i].inQueue)
+	}
+	avgQueueLength := totalQueueLength / len(allQueues)
+
+	return avgQueueLength
 
 }
 
