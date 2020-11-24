@@ -14,6 +14,9 @@ var mutex = &sync.Mutex{}
 var foreNames = []string{"Brian", "Evan", "Martin", "Robert"}
 var surNames = []string{"Hogarty", "Callaghan", "Miller", "Robson"}
 
+var Tills [6]Till
+
+
 //Shop works of the time, handsanitizer,
 type Shop struct {
 	timeOfDay              int
@@ -175,6 +178,25 @@ func remove(slice []Customer, i int) []Customer {
 	return append(slice[:i], slice[i+1:]...)
 }
 
+func findBestTill() Till {
+	shortestQueue := 1
+	temp := Till{}
+	for i := 1; i < len(Tills) - 1; i++ {
+		temp = Tills[i]
+		if (temp.isOpen) {
+			for j := 1; j < len(Tills) - 1; j++ {
+				if (Tills[j].isOpen) {
+					if (len(temp.queue.inQueue) < len(Tills[j].queue.inQueue)) {
+						shortestQueue = i;
+					}
+				}
+			}
+		}
+
+	}
+	return Tills[shortestQueue]
+}
+
 func generateCustomers() {
 	for {
 		r := rand.Intn(len(foreNames))
@@ -249,18 +271,13 @@ func main() {
 	//shop.handSanitizerRemaining = 100
 	//openShop()
 
-	fastTrack := *newTill("Fast track", true, true, 2)
-	till1 := *newTill("Till 1", false, false, 3)
-	till2 := *newTill("Till 2", false, false, 3)
-	till3 := *newTill("Till 3", false, false, 3)
-	till4 := *newTill("Till 4", false, false, 3)
-	till5 := *newTill("Till 5", false, false, 3)
-	UNUSED(fastTrack)
-	UNUSED(till1)
-	UNUSED(till2)
-	UNUSED(till3)
-	UNUSED(till4)
-	UNUSED(till5)
+	Tills[0] = *newTill("Fast track", true, true, 2)
+	Tills[1] = *newTill("Till 1", false, false, 3)
+	Tills[2] = *newTill("Till 2", false, false, 3)
+	Tills[3] = *newTill("Till 3", false, false, 3)
+	Tills[4] = *newTill("Till 4", false, false, 3)
+	Tills[5] = *newTill("Till 5", false, false, 3)
+
 	for {
 		
 
