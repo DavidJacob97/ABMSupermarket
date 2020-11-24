@@ -27,14 +27,41 @@ var shop Shop
 
 //Customer has patience var, possibly not enter cause of a mask, carries items
 type Customer struct {
-	name       string
-	patience   int
-	hasMask bool
-	items      int
+	name     string
+	patience int
+	hasMask  bool
+	items    int
 }
 
 var arrivingCustomers []Customer
 var customersInShop []Customer
+
+func randomNumber(min int, max int) int {
+	rand.Seed(time.Now().UnixNano())
+
+	randNum := rand.Intn((max - min + 1) + min)
+	return randNum
+}
+
+func addCustomerToShop() {
+	for {
+		if len(customersInShop) >= shop.maxCapacity {
+			time.Sleep(100 * time.Millisecond)
+		}
+	}
+
+	//this part will remove the customer if he is not wearing mask
+	var randNum = randomNumber(1, 5)
+	var emptyCustomer = Customer{}
+	if arrivingCustomers[randNum].hasMask == true {
+
+	} else {
+		arrivingCustomers[randNum] = arrivingCustomers[len(arrivingCustomers)-1] // Copy last element to index i.
+		arrivingCustomers[len(arrivingCustomers)-1] = emptyCustomer              // Erase last element (write zero value).
+		arrivingCustomers = arrivingCustomers[:len(arrivingCustomers)-1]         // Truncate slice.
+	}
+
+}
 
 func randomPause(max int) {
 	time.Sleep(time.Millisecond * time.Duration(rand.Intn(max*1000)))
@@ -187,8 +214,8 @@ func generateCustomers() {
 
 		customer := Customer{name: name}
 		customer.hasMask = false //need some code in some chance
-		customer.items = 0          //to be generated randomly once customer enters shop
-		customer.patience = 0       //to be generated randomly
+		customer.items = 0       //to be generated randomly once customer enters shop
+		customer.patience = 0    //to be generated randomly
 
 		mutex.Lock()
 		arrivingCustomers = append(arrivingCustomers, customer)
@@ -262,10 +289,6 @@ func main() {
 	UNUSED(till4)
 	UNUSED(till5)
 	for {
-		
-
-
-
 
 	}
 }
