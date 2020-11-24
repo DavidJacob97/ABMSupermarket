@@ -283,6 +283,7 @@ func main() {
 	go generateCustomers()
 	shop.timeOfDay = 540
 	shop.handSanitizerRemaining = 100
+	go timeLoop()
 
 	Tills[0] = *newTill("Fast track", true, true, 2)
 	Tills[1] = *newTill("Till 1", false, false, 3)
