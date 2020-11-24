@@ -194,12 +194,12 @@ func generateCustomers() {
 		name := foreName + " " + lastName
 
 		customer := Customer{name: name}
-		customer.isAntiMask = false //need some code in some chance
+		customer.hasMask = false //need some code in some chance
 		customer.items = 5          //to be generated randomly
 		customer.patience = 0       //to be generated randomly
 
 		mutex.Lock()
-		allCustomers = append(arrivingCustomers, customer)
+		arrivingCustomers = append(arrivingCustomers, customer)
 		mutex.Unlock()
 		shop.customerInstore=shop.customerInstore+1
 }
