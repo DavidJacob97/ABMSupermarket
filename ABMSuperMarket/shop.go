@@ -19,15 +19,29 @@ var Tills [6]Till
 
 //Shop works of the time, handsanitizer,
 type Shop struct {
-	timeOfDay              int
+	timeOfDay              float64
 	maxCapacity            int
 	handSanitizerRemaining int
 	daysRemaining          int
 	tills                  []Till
+	customerInstore         int
+	shopOpened              bool
+	
+}
+
+type ShopStat struct
+{
+ waitTimes     []float64
+totalProductsProcessed int
+averagecustomerwaitTime   float64
+averagecheckoututilisation   float64
+averageproductspertrolley    int
+Thenumberoflostcustomers     int
+
 }
 
 var shop Shop
-
+var stat ShopStat
 //Customer has patience var, possibly not enter cause of a mask, carries items
 type Customer struct {
 	name       string
@@ -44,11 +58,21 @@ func randomPause(max int) {
 }
 
 func timeLoop() {
-	shop.timeOfDay = shop.timeOfDay + 1
-	if shop.timeOfDay == 1440 {
-		shop.timeOfDay = 0
-		shop.daysRemaining = shop.daysRemaining - 1
-	}
+    for{
+    if shop.timeOfDay == 540{
+        shop.shopOpened=true
+    }
+    if shop.timeOfDay == 1320{
+        shop.shopOpened=false
+    }
+    
+    shop.timeOfDay=shop.timeOfDay+1
+    time.Sleep(5 * time.Millisecond)
+    
+    }
+    
+    
+	
 }
 
 func setCovid() {
@@ -76,46 +100,37 @@ func setCovid() {
 }
 
 func openShop() {
-	fmt.Println("Tills opening")
+    if shop.shopOpened==true{
+	    fmt.Println("Tills opening")
+    for shop.shopOpened==true{
+	
 
 	if shop.daysRemaining == 0 {
 		setCovid()
 		shop.daysRemaining = 7
 	}
-
-	for shop.timeOfDay < 1320 && shop.timeOfDay >= 540 {
 		customer()
 		handSanitizer()
-		timeLoop()
+		
 		time.Sleep(5 * time.Millisecond)
-	}
+	
+    } 
+	
+}
+   fmt.Println("no more customers allowed")
+	fmt.Println("processremaining customers")
+	fmt.Println("close all tills")
+	fmt.Println("close shop")
+	
+	shop.timeOfDay = 540
 
-	if shop.timeOfDay == 1320 {
-		closeShop()
-	}
 }
 
 func customer() {
 	shop.handSanitizerRemaining = shop.handSanitizerRemaining - 1
 }
 
-func closeShop() {
-	fmt.Println("no more customers allowed")
-	fmt.Println("processremaining customers")
-	fmt.Println("close all tills")
-	fmt.Println("close shop")
 
-	for shop.timeOfDay >= 1320 || shop.timeOfDay < 540 {
-		fmt.Println("shop is closed")
-		timeLoop()
-		time.Sleep(5 * time.Millisecond)
-	}
-
-	if shop.timeOfDay == 540 {
-		openShop()
-	}
-
-}
 
 func handSanitizer() {
 	if shop.handSanitizerRemaining == 0 {
@@ -198,7 +213,11 @@ func findBestTill() Till {
 }
 
 func generateCustomers() {
-	for {
+	for   {
+		rand.Seed(time.Now().UnixNano())
+		
+		   if shop.customerInstore<shop.maxCapacity{
+		
 		r := rand.Intn(len(foreNames))
 		foreName := foreNames[r]
 
@@ -209,15 +228,20 @@ func generateCustomers() {
 
 		customer := Customer{name: name}
 		customer.hasMask = false //need some code in some chance
-		customer.items = 0          //to be generated randomly once customer enters shop
+		customer.items = 5          //to be generated randomly
 		customer.patience = 0       //to be generated randomly
 
 		mutex.Lock()
 		arrivingCustomers = append(arrivingCustomers, customer)
 		mutex.Unlock()
-
+		shop.customerInstore=shop.customerInstore+1
+}
 		//generate new customer every 5 sec
 		time.Sleep(time.Duration(5 * time.Second))
+		
+		
+	
+	
 	}
 }
 
@@ -262,14 +286,14 @@ func processCustomer(till Till) {
 }
 
 func main() {
+	setCovid()
 	rand.Seed(time.Now().UnixNano())
 	//var wg sync.WaitGroup
 	//wg.Add(2)
 	go testPrintAllCustomers()
 	go generateCustomers()
-	//shop.timeOfDay = 540
-	//shop.handSanitizerRemaining = 100
-	//openShop()
+	shop.timeOfDay = 540
+	shop.handSanitizerRemaining = 100
 
 	Tills[0] = *newTill("Fast track", true, true, 2)
 	Tills[1] = *newTill("Till 1", false, false, 3)
@@ -281,7 +305,7 @@ func main() {
 	for {
 		
 
-
+		openShop()
 
 
 	}
