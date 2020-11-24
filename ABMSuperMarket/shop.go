@@ -216,7 +216,7 @@ func generateCustomers() {
 	for   {
 		rand.Seed(time.Now().UnixNano())
 		
-		   if shop.customerInstore<shop.maxCapacity{
+		   if shop.customerInstore<shop.maxCapacity && shop.shopOpened==true{
 		
 		r := rand.Intn(len(foreNames))
 		foreName := foreNames[r]
