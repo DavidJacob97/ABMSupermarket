@@ -7,6 +7,8 @@ import (
 	"time"
 )
 
+func UNUSED(x ...interface{}) {}
+
 var mutex = &sync.Mutex{}
 
 var foreNames = []string{"Brian", "Evan", "Martin", "Robert"}
@@ -27,11 +29,12 @@ var shop Shop
 type Customer struct {
 	name       string
 	patience   int
-	isAntiMask bool
+	hasMask bool
 	items      int
 }
 
-var allCustomers []Customer
+var arrivingCustomers []Customer
+var customersInShop []Customer
 
 func randomPause(max int) {
 	time.Sleep(time.Millisecond * time.Duration(rand.Intn(max*1000)))
@@ -174,7 +177,6 @@ func remove(slice []Customer, i int) []Customer {
 
 func generateCustomers() {
 	for {
-		rand.Seed(time.Now().UnixNano())
 		r := rand.Intn(len(foreNames))
 		foreName := foreNames[r]
 
@@ -184,12 +186,12 @@ func generateCustomers() {
 		name := foreName + " " + lastName
 
 		customer := Customer{name: name}
-		customer.isAntiMask = false //need some code in some chance
-		customer.items = 5          //to be generated randomly
+		customer.hasMask = false //need some code in some chance
+		customer.items = 0          //to be generated randomly once customer enters shop
 		customer.patience = 0       //to be generated randomly
 
 		mutex.Lock()
-		allCustomers = append(allCustomers, customer)
+		arrivingCustomers = append(arrivingCustomers, customer)
 		mutex.Unlock()
 
 		//generate new customer every 5 sec
@@ -201,8 +203,8 @@ func testPrintAllCustomers() {
 	for {
 		fmt.Println("Customers in allCustomers:")
 		mutex.Lock()
-		for i := 0; i < len(allCustomers); i++ {
-			fmt.Print(allCustomers[i].name + ", ")
+		for i := 0; i < len(arrivingCustomers); i++ {
+			fmt.Print(arrivingCustomers[i].name + ", ")
 		}
 		mutex.Unlock()
 		fmt.Println()
@@ -238,6 +240,7 @@ func processCustomer(till Till) {
 }
 
 func main() {
+	rand.Seed(time.Now().UnixNano())
 	//var wg sync.WaitGroup
 	//wg.Add(2)
 	go testPrintAllCustomers()
@@ -245,7 +248,24 @@ func main() {
 	//shop.timeOfDay = 540
 	//shop.handSanitizerRemaining = 100
 	//openShop()
+
+	fastTrack := *newTill("Fast track", true, true, 2)
+	till1 := *newTill("Till 1", false, false, 3)
+	till2 := *newTill("Till 2", false, false, 3)
+	till3 := *newTill("Till 3", false, false, 3)
+	till4 := *newTill("Till 4", false, false, 3)
+	till5 := *newTill("Till 5", false, false, 3)
+	UNUSED(fastTrack)
+	UNUSED(till1)
+	UNUSED(till2)
+	UNUSED(till3)
+	UNUSED(till4)
+	UNUSED(till5)
 	for {
+		
+
+
+
 
 	}
 }
