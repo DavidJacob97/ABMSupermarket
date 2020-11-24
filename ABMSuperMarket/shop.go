@@ -16,7 +16,7 @@ var surNames = []string{"Hogarty", "Callaghan", "Miller", "Robson"}
 
 //Shop works of the time, handsanitizer,
 type Shop struct {
-	timeOfDay              int
+	timeOfDay              float64
 	maxCapacity            int
 	handSanitizerRemaining int
 	daysRemaining          int
@@ -26,8 +26,19 @@ type Shop struct {
 	
 }
 
-var shop Shop
+type ShopStat struct
+{
+ waitTimes     []float64
+totalProductsProcessed int
+averagecustomerwaitTime   float64
+averagecheckoututilisation   float64
+averageproductspertrolley    int
+Thenumberoflostcustomers     int
 
+}
+
+var shop Shop
+var stat ShopStat
 //Customer has patience var, possibly not enter cause of a mask, carries items
 type Customer struct {
 	name       string
