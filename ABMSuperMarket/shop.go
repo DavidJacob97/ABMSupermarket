@@ -68,6 +68,8 @@ func addCustomerToShop() {
 			if arrivingCustomers[randNum].hasMask == true {
 				customersInShop = append(customersInShop, arrivingCustomers[randNum])
 
+				customersInShop[len(customersInShop)-1].items = randomNumber(1, 30)
+
 				fmt.Printf("Customer %s has entered the shop\n", arrivingCustomers[randNum].name)
 
 				copy(arrivingCustomers[randNum:], arrivingCustomers[randNum+1:])
@@ -78,6 +80,7 @@ func addCustomerToShop() {
 				shop.handSanitizerRemaining--
 			} else {
 				fmt.Printf("Customer %s does not have a mask and was refused entry\n", arrivingCustomers[randNum].name)
+
 				copy(arrivingCustomers[randNum:], arrivingCustomers[randNum+1:])
 				e := Customer{}
 				arrivingCustomers[len(arrivingCustomers)-1] = e
@@ -358,7 +361,7 @@ func main() {
 	//go timeLoop()
 
 	Tills[0] = *newTill("Fast track", true, true, 2)
-	Tills[1] = *newTill("Till 1", false, false, 3)
+	Tills[1] = *newTill("Till 1", false, true, 3)
 	Tills[2] = *newTill("Till 2", false, false, 3)
 	Tills[3] = *newTill("Till 3", false, false, 3)
 	Tills[4] = *newTill("Till 4", false, false, 3)
