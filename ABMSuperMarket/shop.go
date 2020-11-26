@@ -16,7 +16,7 @@ var foreNames = []string{"Brian", "Evan", "Martin", "Robert"}
 var surNames = []string{"Hogarty", "Callaghan", "Miller", "Robson"}
 
 // Tills is global
-var Tills []Till
+var Tills [6]Till
 
 //Shop works of the time, handsanitizer,
 type Shop struct {
