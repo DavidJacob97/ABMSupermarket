@@ -15,7 +15,7 @@ var mutex = &sync.Mutex{}
 var foreNames = []string{"Brian", "Evan", "Martin", "Robert"}
 var surNames = []string{"Hogarty", "Callaghan", "Miller", "Robson"}
 
-// Tills is global because we use it in a lot of functions
+// Tills is global
 var Tills [6]Till
 
 //Shop works of the time, handsanitizer,
@@ -322,21 +322,15 @@ func main() {
 	Tills[5] = *newTill("Till 5", false, false, 3)
 
 	for {
-		
 
 		//calling processCustomer for each till for processing the customers in queue
 		for i := 0; i < len(Tills); i++ {
-			if (Tills[i].isOpen) {
+			if Tills[i].isOpen {
 				processCustomer(Tills[i])
-
 
 			}
 
-
-
-
 		}
-
 
 		//openShop()
 
