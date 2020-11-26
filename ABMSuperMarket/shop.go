@@ -215,6 +215,15 @@ func remove(slice []Customer, i int) []Customer {
 	return append(slice[:i], slice[i+1:]...)
 }
 
+func fastTrackOrStandard(c Customer) {
+	if Tills[0].isFastTrack == true {
+		if c.items < 15 {
+			Tills[0].queue.inQueue = append(Tills[0].queue.inQueue, c)
+
+		}
+	}
+}
+
 func findBestTill() Till {
 	shortestQueue := 1
 	for i := 1; i < len(Tills)-1; i++ {
