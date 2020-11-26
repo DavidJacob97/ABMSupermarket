@@ -223,27 +223,22 @@ func fastTrackOrStandard(c Customer) {
 
 func findBestTill() Till {
 	shortestQueue := 1
-	temp := Till{}
 	for i := 1; i < len(Tills)-1; i++ {
-		temp = Tills[i]
-		if temp.isOpen {
+		if Tills[i].isOpen {
 			for j := 1; j < len(Tills)-1; j++ {
 				if Tills[j].isOpen {
-					if len(temp.queue.inQueue) < len(Tills[j].queue.inQueue) {
+					if len(Tills[i].queue.inQueue) < len(Tills[j].queue.inQueue) {
 						shortestQueue = i
 					}
 				}
 			}
 		}
-
 	}
 	return Tills[shortestQueue]
 }
 
 func generateCustomers() {
 	for {
-		rand.Seed(time.Now().UnixNano())
-
 		if shop.customerInstore < shop.maxCapacity && shop.shopOpened == true {
 
 			r := rand.Intn(len(foreNames))
