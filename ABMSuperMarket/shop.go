@@ -62,29 +62,29 @@ func randomNumber(min int, max int) int {
 func addCustomerToShop() {
 	for {
 		//this part will remove the customer if he is not wearing mask
-		if (len(arrivingCustomers) > 0) {
+		if len(arrivingCustomers) > 0 {
 			mutex.Lock()
-			randNum := randomNumber(0, len(arrivingCustomers) - 1)
+			randNum := randomNumber(0, len(arrivingCustomers)-1)
 			if arrivingCustomers[randNum].hasMask == true {
 				customersInShop = append(customersInShop, arrivingCustomers[randNum])
 
 				fmt.Printf("Customer %s has entered the shop\n", arrivingCustomers[randNum].name)
 
-				copy(arrivingCustomers[randNum:], arrivingCustomers[randNum + 1:])
+				copy(arrivingCustomers[randNum:], arrivingCustomers[randNum+1:])
 				e := Customer{}
-				arrivingCustomers[len(arrivingCustomers) - 1] = e
-				arrivingCustomers = arrivingCustomers[:len(arrivingCustomers) - 1]
+				arrivingCustomers[len(arrivingCustomers)-1] = e
+				arrivingCustomers = arrivingCustomers[:len(arrivingCustomers)-1]
 
 				shop.handSanitizerRemaining -= 1
 			} else {
 				fmt.Printf("Customer %s does not have a mask and was refused entry\n", arrivingCustomers[randNum].name)
-				copy(arrivingCustomers[randNum:], arrivingCustomers[randNum + 1:])
+				copy(arrivingCustomers[randNum:], arrivingCustomers[randNum+1:])
 				e := Customer{}
-				arrivingCustomers[len(arrivingCustomers) - 1] = e
-				arrivingCustomers = arrivingCustomers[:len(arrivingCustomers) - 1]
+				arrivingCustomers[len(arrivingCustomers)-1] = e
+				arrivingCustomers = arrivingCustomers[:len(arrivingCustomers)-1]
 			}
 			mutex.Unlock()
-			
+
 		}
 		//every 5 sec a customer will be added to the shop
 		time.Sleep(5 * time.Second)
