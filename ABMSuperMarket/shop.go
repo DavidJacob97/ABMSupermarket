@@ -63,7 +63,7 @@ func addCustomerToShop() {
 	for {
 		//this part will remove the customer if he is not wearing mask
 		randNum := randomNumber(0, len(arrivingCustomers))
-		if (len(arrivingCustomers) > 0) {
+		if len(arrivingCustomers) > 0 {
 			if arrivingCustomers[randNum].hasMask == true {
 				customersInShop = append(customersInShop, arrivingCustomers[randNum])
 				mutex.Lock()
@@ -216,12 +216,13 @@ func newTill(name string, isFastTrack bool, isOpen bool, itemProcessingTime int)
 }
 
 func remove(slice []Customer, i int) []Customer {
-	return slice = append(slice[:i], slice[i+1:]...)
+	slice = append(slice[:i], slice[i+1:]...)
+	return slice
 }
 
 // customer chooses the fast track if it is open and if he has less than 15 items
 func fastTrackOrStandard(c Customer) {
-	if Tills[0].isFastTrack.isOpen == true {
+	if Tills[0].isFastTrack == true {
 		if c.items < 15 {
 			Tills[0].queue.inQueue = append(Tills[0].queue.inQueue, c)
 
@@ -250,23 +251,23 @@ func generateCustomers() {
 	for {
 		//if shop.customerInstore < shop.maxCapacity && shop.shopOpened == true {
 
-			r := rand.Intn(len(foreNames))
-			foreName := foreNames[r]
+		r := rand.Intn(len(foreNames))
+		foreName := foreNames[r]
 
-			r = rand.Intn(len(surNames))
+		r = rand.Intn(len(surNames))
 
-			lastName := surNames[r]
-			name := foreName + " " + lastName
+		lastName := surNames[r]
+		name := foreName + " " + lastName
 
-			customer := Customer{name: name}
-			customer.hasMask = true //need some code in some chance
-			customer.items = 5       //to be generated randomly
-			customer.patience = 0    //to be generated randomly
+		customer := Customer{name: name}
+		customer.hasMask = true //need some code in some chance
+		customer.items = 5      //to be generated randomly
+		customer.patience = 0   //to be generated randomly
 
-			mutex.Lock()
-			arrivingCustomers = append(arrivingCustomers, customer)
-			mutex.Unlock()
-			shop.customerInstore = shop.customerInstore + 1
+		mutex.Lock()
+		arrivingCustomers = append(arrivingCustomers, customer)
+		mutex.Unlock()
+		shop.customerInstore = shop.customerInstore + 1
 		//}
 		//generate new customer every 5 sec
 		time.Sleep(time.Duration(5 * time.Second))
@@ -348,14 +349,14 @@ func main() {
 
 		//calling processCustomer for each till for processing the customers in queue
 		/*
-		for i := 0; i < len(Tills); i++ {
-			if Tills[i].isOpen {
-				processCustomer(Tills[i])
+			for i := 0; i < len(Tills); i++ {
+				if Tills[i].isOpen {
+					processCustomer(Tills[i])
+
+				}
 
 			}
-
-		}
-*/
+		*/
 
 		//openShop()
 
