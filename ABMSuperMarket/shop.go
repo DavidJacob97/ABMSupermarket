@@ -216,12 +216,12 @@ func newTill(name string, isFastTrack bool, isOpen bool, itemProcessingTime int)
 }
 
 func remove(slice []Customer, i int) []Customer {
-	return append(slice[:i], slice[i+1:]...)
+	return slice = append(slice[:i], slice[i+1:]...)
 }
 
 // customer chooses the fast track if it is open and if he has less than 15 items
 func fastTrackOrStandard(c Customer) {
-	if Tills[0].isFastTrack == true {
+	if Tills[0].isFastTrack.isOpen == true {
 		if c.items < 15 {
 			Tills[0].queue.inQueue = append(Tills[0].queue.inQueue, c)
 
