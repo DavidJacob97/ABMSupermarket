@@ -16,7 +16,6 @@ var surNames = []string{"Hogarty", "Callaghan", "Miller", "Robson"}
 
 var Tills [6]Till
 
-
 //Shop works of the time, handsanitizer,
 type Shop struct {
 	timeOfDay              float64
@@ -24,55 +23,78 @@ type Shop struct {
 	handSanitizerRemaining int
 	daysRemaining          int
 	tills                  []Till
-	customerInstore         int
-	shopOpened              bool
-	
+	customerInstore        int
+	shopOpened             bool
 }
 
-type ShopStat struct
-{
- waitTimes     []float64
-totalProductsProcessed int
-averagecustomerwaitTime   float64
-averagecheckoututilisation   float64
-averageproductspertrolley    int
-Thenumberoflostcustomers     int
-
+type ShopStat struct {
+	waitTimes                  []float64
+	totalProductsProcessed     int
+	averagecustomerwaitTime    float64
+	averagecheckoututilisation float64
+	averageproductspertrolley  int
+	Thenumberoflostcustomers   int
 }
 
 var shop Shop
 var stat ShopStat
+
 //Customer has patience var, possibly not enter cause of a mask, carries items
 type Customer struct {
-	name       string
-	patience   int
-	hasMask bool
-	items      int
+	name     string
+	patience int
+	hasMask  bool
+	items    int
 }
 
 var arrivingCustomers []Customer
 var customersInShop []Customer
+
+func randomNumber(min int, max int) int {
+	rand.Seed(time.Now().UnixNano())
+
+	randNum := rand.Intn((max - min + 1) + min)
+	return randNum
+}
+
+func addCustomerToShop() {
+	for {
+		if len(customersInShop) >= shop.maxCapacity {
+			time.Sleep(100 * time.Millisecond)
+		}
+	}
+
+	//this part will remove the customer if he is not wearing mask
+	var randNum = randomNumber(1, 5)
+	var emptyCustomer = Customer{}
+	if arrivingCustomers[randNum].hasMask == true {
+
+	} else {
+		arrivingCustomers[randNum] = arrivingCustomers[len(arrivingCustomers)-1] // Copy last element to index i.
+		arrivingCustomers[len(arrivingCustomers)-1] = emptyCustomer              // Erase last element (write zero value).
+		arrivingCustomers = arrivingCustomers[:len(arrivingCustomers)-1]         // Truncate slice.
+	}
+
+}
 
 func randomPause(max int) {
 	time.Sleep(time.Millisecond * time.Duration(rand.Intn(max*1000)))
 }
 
 func timeLoop() {
-    for{
-    if shop.timeOfDay == 540{
-        shop.shopOpened=true
-    }
-    if shop.timeOfDay == 1320{
-        shop.shopOpened=false
-    }
-    
-    shop.timeOfDay=shop.timeOfDay+1
-    time.Sleep(5 * time.Millisecond)
-    
-    }
-    
-    
-	
+	for {
+		if shop.timeOfDay == 540 {
+			shop.shopOpened = true
+		}
+		if shop.timeOfDay == 1320 {
+			shop.shopOpened = false
+		}
+
+		shop.timeOfDay = shop.timeOfDay + 1
+		time.Sleep(5 * time.Millisecond)
+
+	}
+
 }
 
 func setCovid() {
@@ -100,28 +122,27 @@ func setCovid() {
 }
 
 func openShop() {
-    if shop.shopOpened==true{
-	    fmt.Println("Tills opening")
-    for shop.shopOpened==true{
-	
+	if shop.shopOpened == true {
+		fmt.Println("Tills opening")
+		for shop.shopOpened == true {
 
-	if shop.daysRemaining == 0 {
-		setCovid()
-		shop.daysRemaining = 7
+			if shop.daysRemaining == 0 {
+				setCovid()
+				shop.daysRemaining = 7
+			}
+			customer()
+			handSanitizer()
+
+			time.Sleep(5 * time.Millisecond)
+
+		}
+
 	}
-		customer()
-		handSanitizer()
-		
-		time.Sleep(5 * time.Millisecond)
-	
-    } 
-	
-}
-   fmt.Println("no more customers allowed")
+	fmt.Println("no more customers allowed")
 	fmt.Println("processremaining customers")
 	fmt.Println("close all tills")
 	fmt.Println("close shop")
-	
+
 	shop.timeOfDay = 540
 
 }
@@ -129,8 +150,6 @@ func openShop() {
 func customer() {
 	shop.handSanitizerRemaining = shop.handSanitizerRemaining - 1
 }
-
-
 
 func handSanitizer() {
 	if shop.handSanitizerRemaining == 0 {
@@ -162,17 +181,17 @@ func closeTill(t Till) {
 	t.isOpen = false
 }
 
-func getAvgQueueLength(q1 Queue, q2 Queue, q3 Queue, q4 Queue, q5 Queue, q6 Queue) int {
+func getAvgQueueLength() int {
 
-	allQueues := []Queue{q1, q2, q3, q4, q5, q6}
+	allQueues := Tills
 	totalQueueLength := 0
+
 	for i := 0; i < 6; i++ {
-		totalQueueLength = len(allQueues[i].inQueue)
+		totalQueueLength = len(allQueues[i].queue.inQueue)
 	}
-	avgQueueLength := totalQueueLength / len(allQueues)
 
+	avgQueueLength := totalQueueLength / len(Tills)
 	return avgQueueLength
-
 }
 
 func newQueue(itemProcessingTime int) *Queue {
@@ -195,12 +214,12 @@ func remove(slice []Customer, i int) []Customer {
 
 func findBestTill() Till {
 	shortestQueue := 1
-	for i := 1; i < len(Tills) - 1; i++ {
-		if (Tills[i].isOpen) {
-			for j := 1; j < len(Tills) - 1; j++ {
-				if (Tills[j].isOpen) {
-					if (len(Tills[i].queue.inQueue) < len(Tills[j].queue.inQueue)) {
-						shortestQueue = i;
+	for i := 1; i < len(Tills)-1; i++ {
+		if Tills[i].isOpen {
+			for j := 1; j < len(Tills)-1; j++ {
+				if Tills[j].isOpen {
+					if len(Tills[i].queue.inQueue) < len(Tills[j].queue.inQueue) {
+						shortestQueue = i
 					}
 				}
 			}
@@ -210,35 +229,32 @@ func findBestTill() Till {
 }
 
 func generateCustomers() {
-	for   {
+	for {
 		rand.Seed(time.Now().UnixNano())
-		
-		   if shop.customerInstore<shop.maxCapacity{
-		
-		r := rand.Intn(len(foreNames))
-		foreName := foreNames[r]
 
-		r = rand.Intn(len(surNames))
+		if shop.customerInstore < shop.maxCapacity && shop.shopOpened == true {
 
-		lastName := surNames[r]
-		name := foreName + " " + lastName
+			r := rand.Intn(len(foreNames))
+			foreName := foreNames[r]
 
-		customer := Customer{name: name}
-		customer.hasMask = false //need some code in some chance
-		customer.items = 5          //to be generated randomly
-		customer.patience = 0       //to be generated randomly
+			r = rand.Intn(len(surNames))
 
-		mutex.Lock()
-		arrivingCustomers = append(arrivingCustomers, customer)
-		mutex.Unlock()
-		shop.customerInstore=shop.customerInstore+1
-}
+			lastName := surNames[r]
+			name := foreName + " " + lastName
+
+			customer := Customer{name: name}
+			customer.hasMask = false //need some code in some chance
+			customer.items = 5       //to be generated randomly
+			customer.patience = 0    //to be generated randomly
+
+			mutex.Lock()
+			arrivingCustomers = append(arrivingCustomers, customer)
+			mutex.Unlock()
+			shop.customerInstore = shop.customerInstore + 1
+		}
 		//generate new customer every 5 sec
 		time.Sleep(time.Duration(5 * time.Second))
-		
-		
-	
-	
+
 	}
 }
 
@@ -291,6 +307,7 @@ func main() {
 	go generateCustomers()
 	shop.timeOfDay = 540
 	shop.handSanitizerRemaining = 100
+	go timeLoop()
 
 	Tills[0] = *newTill("Fast track", true, true, 2)
 	Tills[1] = *newTill("Till 1", false, false, 3)
@@ -300,10 +317,8 @@ func main() {
 	Tills[5] = *newTill("Till 5", false, false, 3)
 
 	for {
-		
 
 		openShop()
-
 
 	}
 }
