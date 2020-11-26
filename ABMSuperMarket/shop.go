@@ -15,7 +15,7 @@ var mutex = &sync.Mutex{}
 var foreNames = []string{"Brian", "Evan", "Martin", "Robert"}
 var surNames = []string{"Hogarty", "Callaghan", "Miller", "Robson"}
 
-// Tills is global because we use it in a lot of functions
+// Tills is global
 var Tills [6]Till
 
 //Shop works of the time, handsanitizer,
@@ -66,12 +66,16 @@ func addCustomerToShop() {
 		if (len(arrivingCustomers) > 0) {
 			if arrivingCustomers[randNum].hasMask == true {
 				customersInShop = append(customersInShop, arrivingCustomers[randNum])
+				mutex.Lock()
 				remove(arrivingCustomers, randNum)
+				mutex.Unlock()
 				fmt.Printf("Customer %s has entered the shop\n", arrivingCustomers[randNum].name)
 				shop.handSanitizerRemaining -= 1
 			} else {
 				fmt.Printf("Customer %s does not have a mask and was refused entry\n", arrivingCustomers[randNum].name)
+				mutex.Lock()
 				remove(arrivingCustomers, randNum)
+				mutex.Unlock()
 			}
 			//every 5 sec a customer will be added to the shop
 			time.Sleep(5 * time.Second)
@@ -341,19 +345,14 @@ func main() {
 	Tills[5] = *newTill("Till 5", false, false, 3)
 
 	for {
-		
 
 		//calling processCustomer for each till for processing the customers in queue
 		/*
 		for i := 0; i < len(Tills); i++ {
-			if (Tills[i].isOpen) {
+			if Tills[i].isOpen {
 				processCustomer(Tills[i])
 
-
 			}
-
-
-
 
 		}
 */
