@@ -179,6 +179,7 @@ func handSanitizer() {
 
 // Queue has processing item time and Customers array queue
 type Queue struct {
+	isBusy bool
 	itemProcessingTime int
 	inQueue            []Customer
 }
@@ -316,6 +317,24 @@ func testPrintAllCustomersInShop() {
 	}
 }
 
+func processItems(i int) {
+	Tills[i].queue.isBusy = true;
+	for j := Tills[i].queue.inQueue[0].items; j != 0; j-- {
+		time.Sleep(time.Duration(Tills[i].queue.itemProcessingTime) * time.Second)
+		fmt.Printf("Processed item %d for customer %s at %s\n", j, Tills[i].queue.inQueue[0].name, Tills[i].name)
+	}
+
+	fmt.Printf("Customer %s has checked out\n", Tills[i].queue.inQueue[0].name)
+
+	//remove first element in customer slice from queue and maintain order
+	copy(Tills[i].queue.inQueue[0:], Tills[i].queue.inQueue[1:])
+	e := Customer{}
+	Tills[i].queue.inQueue[len(Tills[i].queue.inQueue)-1] = e
+	Tills[i].queue.inQueue = Tills[i].queue.inQueue[:len(Tills[i].queue.inQueue)-1]
+
+	Tills[i].queue.isBusy = false;
+}
+
 func processCustomers() {
 	for {
 		for i := 0; i < len(Tills); i++ {
@@ -326,20 +345,11 @@ func processCustomers() {
 				}
 
 				//process the first customer in queue
-				fmt.Printf("Processing customer %s at till %s\nNumber of items: %d\n", Tills[i].queue.inQueue[0].name, Tills[i].name, Tills[i].queue.inQueue[0].items)
+				fmt.Printf("Processing customer %s at till %s\n\n", Tills[i].queue.inQueue[0].name, Tills[i].name)
 
-				for j := Tills[i].queue.inQueue[0].items; j != 0; j-- {
-					time.Sleep(time.Duration(Tills[i].queue.itemProcessingTime) * time.Second)
-					fmt.Printf("Processed item %d for customer %s at %s\n", j, Tills[i].queue.inQueue[0].name, Tills[i].name)
+				if (!Tills[i].queue.isBusy) {
+					go processItems(i)
 				}
-
-				fmt.Printf("Customer %s has checked out\n", Tills[i].queue.inQueue[0].name)
-
-				//remove first element in customer slice from queue and maintain order
-				copy(Tills[i].queue.inQueue[0:], Tills[i].queue.inQueue[1:])
-				e := Customer{}
-				Tills[i].queue.inQueue[len(Tills[i].queue.inQueue)-1] = e
-				Tills[i].queue.inQueue = Tills[i].queue.inQueue[:len(Tills[i].queue.inQueue)-1]
 			}
 		}
 		time.Sleep(3 * time.Second)
