@@ -62,24 +62,32 @@ func randomNumber(min int, max int) int {
 func addCustomerToShop() {
 	for {
 		//this part will remove the customer if he is not wearing mask
-		randNum := randomNumber(0, len(arrivingCustomers))
 		if (len(arrivingCustomers) > 0) {
+			mutex.Lock()
+			randNum := randomNumber(0, len(arrivingCustomers) - 1)
 			if arrivingCustomers[randNum].hasMask == true {
 				customersInShop = append(customersInShop, arrivingCustomers[randNum])
-				mutex.Lock()
-				remove(arrivingCustomers, randNum)
-				mutex.Unlock()
+
 				fmt.Printf("Customer %s has entered the shop\n", arrivingCustomers[randNum].name)
+
+				copy(arrivingCustomers[randNum:], arrivingCustomers[randNum + 1:])
+				e := Customer{}
+				arrivingCustomers[len(arrivingCustomers) - 1] = e
+				arrivingCustomers = arrivingCustomers[:len(arrivingCustomers) - 1]
+
 				shop.handSanitizerRemaining -= 1
 			} else {
 				fmt.Printf("Customer %s does not have a mask and was refused entry\n", arrivingCustomers[randNum].name)
-				mutex.Lock()
-				remove(arrivingCustomers, randNum)
-				mutex.Unlock()
+				copy(arrivingCustomers[randNum:], arrivingCustomers[randNum + 1:])
+				e := Customer{}
+				arrivingCustomers[len(arrivingCustomers) - 1] = e
+				arrivingCustomers = arrivingCustomers[:len(arrivingCustomers) - 1]
 			}
-			//every 5 sec a customer will be added to the shop
-			time.Sleep(5 * time.Second)
+			mutex.Unlock()
+			
 		}
+		//every 5 sec a customer will be added to the shop
+		time.Sleep(5 * time.Second)
 	}
 }
 
@@ -216,7 +224,8 @@ func newTill(name string, isFastTrack bool, isOpen bool, itemProcessingTime int)
 }
 
 func remove(slice []Customer, i int) []Customer {
-	return slice = append(slice[:i], slice[i+1:]...)
+	slice = append(slice[:i], slice[i+1:]...)
+	return slice
 }
 
 // customer chooses the fast track if it is open and if he has less than 15 items
