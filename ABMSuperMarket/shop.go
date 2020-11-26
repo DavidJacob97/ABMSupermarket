@@ -62,32 +62,33 @@ func randomNumber(min int, max int) int {
 func addCustomerToShop() {
 	for {
 		//this part will remove the customer if he is not wearing mask
-		if (len(arrivingCustomers) > 0) {
+		if len(arrivingCustomers) > 0 {
 			mutex.Lock()
-			randNum := randomNumber(0, len(arrivingCustomers) - 1)
+			randNum := randomNumber(0, len(arrivingCustomers)-1)
 			if arrivingCustomers[randNum].hasMask == true {
 				customersInShop = append(customersInShop, arrivingCustomers[randNum])
 
 				fmt.Printf("Customer %s has entered the shop\n", arrivingCustomers[randNum].name)
 
-				copy(arrivingCustomers[randNum:], arrivingCustomers[randNum + 1:])
+				copy(arrivingCustomers[randNum:], arrivingCustomers[randNum+1:])
 				e := Customer{}
-				arrivingCustomers[len(arrivingCustomers) - 1] = e
-				arrivingCustomers = arrivingCustomers[:len(arrivingCustomers) - 1]
+				arrivingCustomers[len(arrivingCustomers)-1] = e
+				arrivingCustomers = arrivingCustomers[:len(arrivingCustomers)-1]
 
 				shop.handSanitizerRemaining -= 1
 			} else {
 				fmt.Printf("Customer %s does not have a mask and was refused entry\n", arrivingCustomers[randNum].name)
-				copy(arrivingCustomers[randNum:], arrivingCustomers[randNum + 1:])
+
+				copy(arrivingCustomers[randNum:], arrivingCustomers[randNum+1:])
 				e := Customer{}
-				arrivingCustomers[len(arrivingCustomers) - 1] = e
-				arrivingCustomers = arrivingCustomers[:len(arrivingCustomers) - 1]
+				arrivingCustomers[len(arrivingCustomers)-1] = e
+				arrivingCustomers = arrivingCustomers[:len(arrivingCustomers)-1]
 			}
 			mutex.Unlock()
-			
+
 		}
-		//every 5 sec a customer will be added to the shop
-		time.Sleep(5 * time.Second)
+		//every 10 sec a customer will be added to the shop
+		time.Sleep(10 * time.Second)
 	}
 }
 
@@ -239,7 +240,7 @@ func fastTrackOrStandard(c Customer) {
 }
 
 // locates the shortest queue out of the 5 standard tills using Tills var
-func findBestTill() Till {
+func findBestTill() *Till {
 	shortestQueue := 1
 	for i := 1; i < len(Tills)-1; i++ {
 		if Tills[i].isOpen {
@@ -252,7 +253,7 @@ func findBestTill() Till {
 			}
 		}
 	}
-	return Tills[shortestQueue]
+	return &Tills[shortestQueue]
 }
 
 func generateCustomers() {
@@ -294,7 +295,7 @@ func testPrintAllCustomers() {
 		fmt.Println()
 
 		//print array every 10 secs
-		time.Sleep(time.Duration(10 * time.Second))
+		time.Sleep(10 * time.Second)
 	}
 }
 
@@ -309,28 +310,38 @@ func testPrintAllCustomersInShop() {
 		fmt.Println()
 
 		//print array every 10 secs
-		time.Sleep(time.Duration(10 * time.Second))
+		time.Sleep(10 * time.Second)
 	}
 }
 
-func processCustomer(till Till) {
-	if len(till.queue.inQueue) == 0 {
-		fmt.Printf("No customers currently in queue at till %s\n", till.name)
-		return
+func processCustomers() {
+	for {
+		for i := 0; i < len(Tills); i++ {
+			if Tills[i].isOpen {
+				if len(Tills[i].queue.inQueue) == 0 {
+					fmt.Printf("No customers currently in queue at till %s\n", Tills[i].name)
+					continue
+				}
+
+				//process the first customer in queue
+				fmt.Printf("Processing customer %s at till %s\nNumber of items: %d\n", Tills[i].queue.inQueue[0].name, Tills[i].name, Tills[i].queue.inQueue[0].items)
+
+				for i := Tills[i].queue.inQueue[0].items; i != 0; i-- {
+					time.Sleep(time.Duration(Tills[i].queue.itemProcessingTime) * time.Second)
+					fmt.Printf("Processed item %d\n", i)
+				}
+
+				fmt.Printf("Customer %s has checked out\n", Tills[i].queue.inQueue[0].name)
+
+				//remove first element in customer slice from queue and maintain order
+				copy(Tills[i].queue.inQueue[0:], Tills[i].queue.inQueue[1:])
+				e := Customer{}
+				Tills[i].queue.inQueue[len(Tills[i].queue.inQueue)-1] = e
+				Tills[i].queue.inQueue = Tills[i].queue.inQueue[:len(Tills[i].queue.inQueue)-1]
+			}
+		}
+		time.Sleep(3 * time.Second)
 	}
-
-	//process the first customer in queue
-	fmt.Printf("Processing customer %s at till %s\nNumber of items: %d\n", till.queue.inQueue[0].name, till.name, till.queue.inQueue[0].items)
-
-	for i := till.queue.inQueue[0].items; i != 0; i-- {
-		time.Sleep(time.Duration(till.queue.itemProcessingTime) * time.Second)
-		fmt.Printf("Processed item %d\n", i)
-	}
-
-	fmt.Printf("Customer %s has checked out\n", till.queue.inQueue[0].name)
-
-	//remove first element in customer slice from queue and maintain order
-	till.queue.inQueue = remove(till.queue.inQueue, 0)
 }
 
 func main() {
@@ -342,6 +353,7 @@ func main() {
 	go testPrintAllCustomersInShop()
 	go generateCustomers()
 	go addCustomerToShop()
+	go processCustomers()
 	//shop.timeOfDay = 540
 	//shop.handSanitizerRemaining = 100
 	//go timeLoop()
@@ -356,15 +368,34 @@ func main() {
 	for {
 
 		//calling processCustomer for each till for processing the customers in queue
-		/*
-			for i := 0; i < len(Tills); i++ {
-				if Tills[i].isOpen {
-					processCustomer(Tills[i])
 
-				}
+		if len(customersInShop) > 0 {
+			randNum := randomNumber(0, len(customersInShop)-1)
+			c := customersInShop[randNum]
+			if c.items > 6 {
+				t := findBestTill()
 
+				t.queue.inQueue = append(t.queue.inQueue, c)
+				fmt.Printf("Customer %s has entered the queue at %s\n", c.name, t.name)
+
+				copy(customersInShop[randNum:], customersInShop[randNum+1:])
+				e := Customer{}
+				customersInShop[len(customersInShop)-1] = e
+				customersInShop = customersInShop[:len(customersInShop)-1]
+			} else {
+				fmt.Printf("Customer %s has entered the fast track queue\n", c.name)
+
+				Tills[0].queue.inQueue = append(Tills[0].queue.inQueue, c)
+
+				copy(customersInShop[randNum:], customersInShop[randNum+1:])
+				e := Customer{}
+				customersInShop[len(customersInShop)-1] = e
+				customersInShop = customersInShop[:len(customersInShop)-1]
 			}
-		*/
+		}
+
+		//just testing sleep timer of 3 secs
+		time.Sleep(3 * time.Second)
 
 		//openShop()
 
