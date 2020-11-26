@@ -216,7 +216,7 @@ func newTill(name string, isFastTrack bool, isOpen bool, itemProcessingTime int)
 }
 
 func remove(slice []Customer, i int) []Customer {
-	return append(slice[:i], slice[i+1:]...)
+	return slice = append(slice[:i], slice[i+1:]...)
 }
 
 // customer chooses the fast track if it is open and if he has less than 15 items
