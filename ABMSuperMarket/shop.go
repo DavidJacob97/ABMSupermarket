@@ -7,6 +7,7 @@ import (
 	"time"
 )
 
+// UNUSED work around
 func UNUSED(x ...interface{}) {}
 
 var mutex = &sync.Mutex{}
@@ -14,6 +15,7 @@ var mutex = &sync.Mutex{}
 var foreNames = []string{"Brian", "Evan", "Martin", "Robert"}
 var surNames = []string{"Hogarty", "Callaghan", "Miller", "Robson"}
 
+// Tills is global because we use it in a lot of functions
 var Tills [6]Till
 
 //Shop works of the time, handsanitizer,
@@ -27,6 +29,7 @@ type Shop struct {
 	shopOpened             bool
 }
 
+// ShopStat gives back info about how well our shop is doing
 type ShopStat struct {
 	waitTimes                  []float64
 	totalProductsProcessed     int
@@ -39,7 +42,7 @@ type ShopStat struct {
 var shop Shop
 var stat ShopStat
 
-//Customer has patience var, possibly not enter cause of a mask, carries items
+//Customer object, possibly not enter cause of a mask, carries items
 type Customer struct {
 	name     string
 	patience int
@@ -210,6 +213,17 @@ func remove(slice []Customer, i int) []Customer {
 	return append(slice[:i], slice[i+1:]...)
 }
 
+// customer chooses the fast track if it is open and if he has less than 15 items
+func fastTrackOrStandard(c Customer) {
+	if Tills[0].isFastTrack == true {
+		if c.items < 15 {
+			Tills[0].queue.inQueue = append(Tills[0].queue.inQueue, c)
+
+		}
+	}
+}
+
+// locates the shortest queue out of the 5 standard tills using Tills var
 func findBestTill() Till {
 	shortestQueue := 1
 	for i := 1; i < len(Tills)-1; i++ {
