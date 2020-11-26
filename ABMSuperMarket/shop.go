@@ -321,7 +321,7 @@ func processCustomers() {
 		for i := 0; i < len(Tills); i++ {
 			if Tills[i].isOpen {
 				if len(Tills[i].queue.inQueue) == 0 {
-					fmt.Printf("No customers currently in queue at till %s\n", Tills[i].name)
+					fmt.Printf("No customers currently in queue at %s\n", Tills[i].name)
 					continue
 				}
 
@@ -330,7 +330,7 @@ func processCustomers() {
 
 				for j := Tills[i].queue.inQueue[0].items; j != 0; j-- {
 					time.Sleep(time.Duration(Tills[i].queue.itemProcessingTime) * time.Second)
-					fmt.Printf("Processed item %d for customer %s at till %s\n", j, Tills[i].queue.inQueue[0].name, Tills[i].name)
+					fmt.Printf("Processed item %d for customer %s at %s\n", j, Tills[i].queue.inQueue[0].name, Tills[i].name)
 				}
 
 				fmt.Printf("Customer %s has checked out\n", Tills[i].queue.inQueue[0].name)
