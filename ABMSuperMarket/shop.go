@@ -7,6 +7,7 @@ import (
 	"time"
 )
 
+// UNUSED work around
 func UNUSED(x ...interface{}) {}
 
 var mutex = &sync.Mutex{}
@@ -14,6 +15,7 @@ var mutex = &sync.Mutex{}
 var foreNames = []string{"Brian", "Evan", "Martin", "Robert"}
 var surNames = []string{"Hogarty", "Callaghan", "Miller", "Robson"}
 
+// Tills is global because we use it in a lot of functions
 var Tills [6]Till
 
 //Shop works of the time, handsanitizer,
@@ -27,6 +29,7 @@ type Shop struct {
 	shopOpened             bool
 }
 
+// ShopStat gives back info about how well our shop is doing
 type ShopStat struct {
 	waitTimes                  []float64
 	totalProductsProcessed     int
