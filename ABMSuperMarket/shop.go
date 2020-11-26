@@ -179,7 +179,7 @@ func handSanitizer() {
 
 // Queue has processing item time and Customers array queue
 type Queue struct {
-	isBusy bool
+	isBusy             bool
 	itemProcessingTime int
 	inQueue            []Customer
 }
@@ -318,7 +318,7 @@ func testPrintAllCustomersInShop() {
 }
 
 func processItems(i int) {
-	Tills[i].queue.isBusy = true;
+	Tills[i].queue.isBusy = true
 	for j := Tills[i].queue.inQueue[0].items; j != 0; j-- {
 		time.Sleep(time.Duration(Tills[i].queue.itemProcessingTime) * time.Second)
 		fmt.Printf("Processed item %d for customer %s at %s\n", j, Tills[i].queue.inQueue[0].name, Tills[i].name)
@@ -332,7 +332,7 @@ func processItems(i int) {
 	Tills[i].queue.inQueue[len(Tills[i].queue.inQueue)-1] = e
 	Tills[i].queue.inQueue = Tills[i].queue.inQueue[:len(Tills[i].queue.inQueue)-1]
 
-	Tills[i].queue.isBusy = false;
+	Tills[i].queue.isBusy = false
 }
 
 func processCustomers() {
@@ -345,9 +345,9 @@ func processCustomers() {
 				}
 
 				//process the first customer in queue
-				fmt.Printf("Processing customer %s at till %s\n\n", Tills[i].queue.inQueue[0].name, Tills[i].name)
+				fmt.Printf("Processing customer %s at %s\n\n", Tills[i].queue.inQueue[0].name, Tills[i].name)
 
-				if (!Tills[i].queue.isBusy) {
+				if !Tills[i].queue.isBusy {
 					go processItems(i)
 				}
 			}
