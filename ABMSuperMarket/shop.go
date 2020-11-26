@@ -75,7 +75,7 @@ func addCustomerToShop() {
 				arrivingCustomers[len(arrivingCustomers)-1] = e
 				arrivingCustomers = arrivingCustomers[:len(arrivingCustomers)-1]
 
-				shop.handSanitizerRemaining -= 1
+				shop.handSanitizerRemaining--
 			} else {
 				fmt.Printf("Customer %s does not have a mask and was refused entry\n", arrivingCustomers[randNum].name)
 				copy(arrivingCustomers[randNum:], arrivingCustomers[randNum+1:])
