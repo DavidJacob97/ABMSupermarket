@@ -61,7 +61,10 @@ func addCustomerToShop() {
 	for {
 		if len(customersInShop) >= shop.maxCapacity {
 			time.Sleep(100 * time.Millisecond)
+		} else {
+			break
 		}
+
 	}
 
 	//this part will remove the customer if he is not wearing mask
