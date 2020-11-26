@@ -325,9 +325,9 @@ func processCustomers() {
 				//process the first customer in queue
 				fmt.Printf("Processing customer %s at till %s\nNumber of items: %d\n", Tills[i].queue.inQueue[0].name, Tills[i].name, Tills[i].queue.inQueue[0].items)
 
-				for i := Tills[i].queue.inQueue[0].items; i != 0; i-- {
+				for j := Tills[i].queue.inQueue[0].items; j != 0; j-- {
 					time.Sleep(time.Duration(Tills[i].queue.itemProcessingTime) * time.Second)
-					fmt.Printf("Processed item %d for %s at till %s\n", i, Tills[i].queue.inQueue[0].name, Tills[i].name)
+					fmt.Printf("Processed item %d for customer %s at till %s\n", j, Tills[i].queue.inQueue[0].name, Tills[i].name)
 				}
 
 				fmt.Printf("Customer %s has checked out\n", Tills[i].queue.inQueue[0].name)
