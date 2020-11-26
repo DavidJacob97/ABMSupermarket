@@ -63,17 +63,19 @@ func addCustomerToShop() {
 	for {
 		//this part will remove the customer if he is not wearing mask
 		randNum := randomNumber(0, len(arrivingCustomers))
-		if arrivingCustomers[randNum].hasMask == true {
-			customersInShop = append(customersInShop, arrivingCustomers[randNum])
-			remove(arrivingCustomers, randNum)
-			fmt.Printf("Customer %s has entered the shop", arrivingCustomers[randNum].name)
-			shop.handSanitizerRemaining -= 1
-		} else {
-			fmt.Printf("Customer %s does not have a mask and was refused entry", arrivingCustomers[randNum].name)
-			remove(arrivingCustomers, randNum)
+		if (len(arrivingCustomers) > 0) {
+			if arrivingCustomers[randNum].hasMask == true {
+				customersInShop = append(customersInShop, arrivingCustomers[randNum])
+				remove(arrivingCustomers, randNum)
+				fmt.Printf("Customer %s has entered the shop\n", arrivingCustomers[randNum].name)
+				shop.handSanitizerRemaining -= 1
+			} else {
+				fmt.Printf("Customer %s does not have a mask and was refused entry\n", arrivingCustomers[randNum].name)
+				remove(arrivingCustomers, randNum)
+			}
+			//every 5 sec a customer will be added to the shop
+			time.Sleep(5 * time.Second)
 		}
-		//every 5 sec a customer will be added to the shop
-		time.Sleep(5 * time.Second)
 	}
 }
 
@@ -242,7 +244,7 @@ func findBestTill() Till {
 
 func generateCustomers() {
 	for {
-		if shop.customerInstore < shop.maxCapacity && shop.shopOpened == true {
+		//if shop.customerInstore < shop.maxCapacity && shop.shopOpened == true {
 
 			r := rand.Intn(len(foreNames))
 			foreName := foreNames[r]
@@ -253,7 +255,7 @@ func generateCustomers() {
 			name := foreName + " " + lastName
 
 			customer := Customer{name: name}
-			customer.hasMask = false //need some code in some chance
+			customer.hasMask = true //need some code in some chance
 			customer.items = 5       //to be generated randomly
 			customer.patience = 0    //to be generated randomly
 
@@ -261,7 +263,7 @@ func generateCustomers() {
 			arrivingCustomers = append(arrivingCustomers, customer)
 			mutex.Unlock()
 			shop.customerInstore = shop.customerInstore + 1
-		}
+		//}
 		//generate new customer every 5 sec
 		time.Sleep(time.Duration(5 * time.Second))
 
@@ -274,6 +276,21 @@ func testPrintAllCustomers() {
 		mutex.Lock()
 		for i := 0; i < len(arrivingCustomers); i++ {
 			fmt.Print(arrivingCustomers[i].name + ", ")
+		}
+		mutex.Unlock()
+		fmt.Println()
+
+		//print array every 10 secs
+		time.Sleep(time.Duration(10 * time.Second))
+	}
+}
+
+func testPrintAllCustomersInShop() {
+	for {
+		fmt.Println("Customers in customersInShop:")
+		mutex.Lock()
+		for i := 0; i < len(customersInShop); i++ {
+			fmt.Print(customersInShop[i].name + ", ")
 		}
 		mutex.Unlock()
 		fmt.Println()
@@ -309,7 +326,9 @@ func main() {
 	//var wg sync.WaitGroup
 	//wg.Add(2)
 	go testPrintAllCustomers()
+	go testPrintAllCustomersInShop()
 	go generateCustomers()
+	go addCustomerToShop()
 	//shop.timeOfDay = 540
 	//shop.handSanitizerRemaining = 100
 	//go timeLoop()
@@ -325,6 +344,7 @@ func main() {
 		
 
 		//calling processCustomer for each till for processing the customers in queue
+		/*
 		for i := 0; i < len(Tills); i++ {
 			if (Tills[i].isOpen) {
 				processCustomer(Tills[i])
@@ -336,7 +356,7 @@ func main() {
 
 
 		}
-
+*/
 
 		//openShop()
 
