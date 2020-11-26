@@ -52,29 +52,26 @@ var customersInShop []Customer
 
 func randomNumber(min int, max int) int {
 	rand.Seed(time.Now().UnixNano())
-
 	randNum := rand.Intn((max - min + 1) + min)
 	return randNum
 }
 
 func addCustomerToShop() {
 	for {
-		if len(customersInShop) >= shop.maxCapacity {
-			time.Sleep(100 * time.Millisecond)
+		//this part will remove the customer if he is not wearing mask
+		randNum := randomNumber(0, len(arrivingCustomers))
+		if arrivingCustomers[randNum].hasMask == true {
+			customersInShop = append(customersInShop, arrivingCustomers[randNum])
+			remove(arrivingCustomers, randNum)
+			fmt.Printf("Customer %s has entered the shop", arrivingCustomers[randNum].name)
+			shop.handSanitizerRemaining -= 1
+		} else {
+			fmt.Printf("Customer %s does not have a mask and was refused entry", arrivingCustomers[randNum].name)
+			remove(arrivingCustomers, randNum)
 		}
+		//every 5 sec a customer will be added to the shop
+		time.Sleep(5 * time.Second)
 	}
-
-	//this part will remove the customer if he is not wearing mask
-	var randNum = randomNumber(1, 5)
-	var emptyCustomer = Customer{}
-	if arrivingCustomers[randNum].hasMask == true {
-
-	} else {
-		arrivingCustomers[randNum] = arrivingCustomers[len(arrivingCustomers)-1] // Copy last element to index i.
-		arrivingCustomers[len(arrivingCustomers)-1] = emptyCustomer              // Erase last element (write zero value).
-		arrivingCustomers = arrivingCustomers[:len(arrivingCustomers)-1]         // Truncate slice.
-	}
-
 }
 
 func randomPause(max int) {
@@ -98,6 +95,7 @@ func timeLoop() {
 }
 
 func setCovid() {
+
 	rand.Seed(time.Now().UnixNano())
 	min := 1
 	max := 5
@@ -272,11 +270,6 @@ func testPrintAllCustomers() {
 }
 
 func processCustomer(till Till) {
-	if !till.isOpen {
-		fmt.Printf("Till %s is currently closed\n", till.name)
-		return
-	}
-
 	if len(till.queue.inQueue) == 0 {
 		fmt.Printf("No customers currently in queue at till %s\n", till.name)
 		return
@@ -303,9 +296,9 @@ func main() {
 	//wg.Add(2)
 	go testPrintAllCustomers()
 	go generateCustomers()
-	shop.timeOfDay = 540
-	shop.handSanitizerRemaining = 100
-	go timeLoop()
+	//shop.timeOfDay = 540
+	//shop.handSanitizerRemaining = 100
+	//go timeLoop()
 
 	Tills[0] = *newTill("Fast track", true, true, 2)
 	Tills[1] = *newTill("Till 1", false, false, 3)
@@ -315,8 +308,23 @@ func main() {
 	Tills[5] = *newTill("Till 5", false, false, 3)
 
 	for {
+		
 
-		openShop()
+		//calling processCustomer for each till for processing the customers in queue
+		for i := 0; i < len(Tills); i++ {
+			if (Tills[i].isOpen) {
+				processCustomer(Tills[i])
+
+
+			}
+
+
+
+
+		}
+
+
+		//openShop()
 
 	}
 }
