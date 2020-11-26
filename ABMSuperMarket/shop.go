@@ -259,23 +259,23 @@ func generateCustomers() {
 	for {
 		//if shop.customerInstore < shop.maxCapacity && shop.shopOpened == true {
 
-			r := rand.Intn(len(foreNames))
-			foreName := foreNames[r]
+		r := rand.Intn(len(foreNames))
+		foreName := foreNames[r]
 
-			r = rand.Intn(len(surNames))
+		r = rand.Intn(len(surNames))
 
-			lastName := surNames[r]
-			name := foreName + " " + lastName
+		lastName := surNames[r]
+		name := foreName + " " + lastName
 
-			customer := Customer{name: name}
-			customer.hasMask = true //need some code in some chance
-			customer.items = 5       //to be generated randomly
-			customer.patience = 0    //to be generated randomly
+		customer := Customer{name: name}
+		customer.hasMask = true //need some code in some chance
+		customer.items = 5      //to be generated randomly
+		customer.patience = 0   //to be generated randomly
 
-			mutex.Lock()
-			arrivingCustomers = append(arrivingCustomers, customer)
-			mutex.Unlock()
-			shop.customerInstore = shop.customerInstore + 1
+		mutex.Lock()
+		arrivingCustomers = append(arrivingCustomers, customer)
+		mutex.Unlock()
+		shop.customerInstore = shop.customerInstore + 1
 		//}
 		//generate new customer every 5 sec
 		time.Sleep(time.Duration(5 * time.Second))
@@ -357,14 +357,14 @@ func main() {
 
 		//calling processCustomer for each till for processing the customers in queue
 		/*
-		for i := 0; i < len(Tills); i++ {
-			if Tills[i].isOpen {
-				processCustomer(Tills[i])
+			for i := 0; i < len(Tills); i++ {
+				if Tills[i].isOpen {
+					processCustomer(Tills[i])
+
+				}
 
 			}
-
-		}
-*/
+		*/
 
 		//openShop()
 
