@@ -223,8 +223,8 @@ func makeTimestamp() int64 {
 }
 
 func generateCustomers() {
-	for  daysOfSimulation>0 {
-		if  len(allCustomers) < shop.maxCapacity {
+	for daysOfSimulation > 0 {
+		if len(arrivingCustomers) < shop.maxCapacity {
 		r := rand.Intn(len(foreNames))
 		foreName := foreNames[r]
 
@@ -250,8 +250,6 @@ func generateCustomers() {
 		time.Sleep(time.Duration(200 * time.Millisecond))
 	}
 }
-
-
 
 func testPrintAllCustomers() {
 	for {
@@ -294,11 +292,13 @@ func processItems(i int) {
 	fmt.Printf("Customer %s has checked out\n", Tills[i].queue.inQueue[0].name)
 
 	//Remove first element in customer slice from queue and maintain order
+	mutex.Lock()
 	copy(Tills[i].queue.inQueue[0:], Tills[i].queue.inQueue[1:])
 	e := Customer{}
 	Tills[i].queue.inQueue[len(Tills[i].queue.inQueue)-1] = e
 	Tills[i].queue.inQueue = Tills[i].queue.inQueue[:len(Tills[i].queue.inQueue)-1]
 	Tills[i].queue.isBusy = false
+	mutex.Unlock()
 }
 
 func getAvgItems(x []int) float64 {
@@ -321,6 +321,7 @@ func getAvgTimes(x []int64) int64 {
 	return avg
 
 }
+
 func processCustomers() {
 	for {
 		for i := 0; i < len(Tills); i++ {
@@ -351,7 +352,6 @@ func processCustomers() {
 				}
 			}
 		}
-		
 		time.Sleep(500 * time.Millisecond)
 	}
 }
