@@ -148,7 +148,7 @@ func openShop() {
 				setCovid()
 				shop.daysRemaining = 7
 			}
-			customer()
+			
 			handSanitizer()
 
 			time.Sleep(5 * time.Millisecond)
