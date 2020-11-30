@@ -62,7 +62,7 @@ func randomNumber(min int, max int) int {
 
 func addCustomerToShop() {
 	for {
-		if len(arrivingCustomers) > 0 {
+		if len(arrivingCustomers) > 0  && len(customersInShop)< shop.maxCapacity{
 			mutex.Lock()
 			randNum := randomNumber(0, len(arrivingCustomers)-1)
 			if arrivingCustomers[randNum].hasMask == true {
