@@ -1,3 +1,4 @@
+
 package main
 
 import (
@@ -48,7 +49,7 @@ type Customer struct {
 	hasMask  bool
 	items    int
 	arrival  int64
-	checkout float64
+	
 }
 
 var arrivingCustomers []Customer
@@ -96,14 +97,18 @@ func randomPause(max int) {
 	time.Sleep(time.Millisecond * time.Duration(rand.Intn(max*1000)))
 }
 
+
 func timeLoop() {
-	for {
-		shop.shopOpened = true
-		time.Sleep(30 * time.Millisecond)
-		shop.shopOpened = false
-		daysOfSimulation--
+for {
+	    shop.shopOpened=true
+	     time.Sleep(2500 * time.Second)
+	     shop.shopOpened=false
+	     time.Sleep(1000 * time.Second)
+	     daysOfSimulation--
 	}
 }
+
+
 
 func setCovid() {
 	level := randomNumber(1, 5)
@@ -122,38 +127,9 @@ func setCovid() {
 	default:
 		shop.maxCapacity = 100
 	}
-	fmt.Printf("Current Covid-19 Restriction Level: %d\nMax Customers Allowed to Enter: %d\n", level, shop.maxCapacity)
+	fmt.Printf("Current Covid-19 Restriction Level: %d\nMax Customers Allowed to Enter: %d", level, shop.maxCapacity)
 }
 
-func openShop() {
-	if shop.shopOpened == true {
-		fmt.Println("Tills opening")
-		for shop.shopOpened == true {
-
-			if shop.daysRemaining == 0 {
-				setCovid()
-				shop.daysRemaining = 7
-			}
-			customer()
-			handSanitizer()
-
-			time.Sleep(5 * time.Millisecond)
-
-		}
-
-	}
-	fmt.Println("no more customers allowed")
-	fmt.Println("processremaining customers")
-	fmt.Println("close all tills")
-	fmt.Println("close shop")
-
-	shop.timeOfDay = 540
-
-}
-
-func customer() {
-	shop.handSanitizerRemaining = shop.handSanitizerRemaining - 1
-}
 
 func handSanitizer() {
 	if shop.handSanitizerRemaining == 0 {
@@ -248,7 +224,7 @@ func makeTimestamp() int64 {
 }
 
 func generateCustomers() {
-	for {
+	for  daysOfSimulation>0 {
 		//if shop.customerInstore < shop.maxCapacity && shop.shopOpened == true {
 		r := rand.Intn(len(foreNames))
 		foreName := foreNames[r]
@@ -258,7 +234,7 @@ func generateCustomers() {
 		customer := Customer{name: name}
 		customer.hasMask = true               //need some code in some chance
 		customer.items = randomNumber(1, 200) //to be generated randomly
-		customer.checkout = checkoutTime(foreName, customer.items)
+		
 		mutex.Lock()
 		arrivingCustomers = append(arrivingCustomers, customer)
 		mutex.Unlock()
@@ -272,23 +248,7 @@ func generateCustomers() {
 	}
 }
 
-func checkoutTime(name string, items int) float64 {
-	var nrOfItems float64 = float64(items)
-	totalTime := 0.00
-	if name == "Brian" {
-		totalTime = (nrOfItems * shop.scanTime) * 2
-	}
-	if name == "Evan" {
-		totalTime = (nrOfItems * shop.scanTime) * 3
-	}
-	if name == "Martin" {
-		totalTime = (nrOfItems * shop.scanTime) * 4
-	}
-	if name == "Robert" {
-		totalTime = (nrOfItems * shop.scanTime) * 5
-	}
-	return totalTime
-}
+
 
 func testPrintAllCustomers() {
 	for {
@@ -388,7 +348,8 @@ func processCustomers() {
 				}
 			}
 		}
-		time.Sleep(3 * time.Second)
+		
+		time.Sleep(500 * time.Millisecond)
 	}
 }
 
@@ -411,8 +372,8 @@ func main() {
 	go addCustomerToShop()
 	go processCustomers()
 	//shop.timeOfDay = 540
-	shop.handSanitizerRemaining = 100
-	//go timeLoop()
+	shop.handSanitizerRemaining = 50
+	go timeLoop()
 
 	Tills[0] = *newTill("Fast track", true, true, 1)
 	Tills[1] = *newTill("Till 1", false, true, 1)
@@ -448,8 +409,8 @@ func main() {
 		} else {
 			//fmt.Println("Waiting for customers\n")
 		}
-		time.Sleep(3 * time.Second)
-		//openShop()
+		time.Sleep(500 * time.Millisecond)
+		
 	}
 	printStat()
 }
