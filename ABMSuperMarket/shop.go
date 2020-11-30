@@ -202,12 +202,14 @@ func closeTill(t Till) {
 
 func getAvgQueueLength() int {
 	totalQueueLength := 0
+	totalOpenTills := 0
 	for i := 1; i < len(Tills); i++ {
 		if Tills[i].isOpen {
+			totalOpenTills += 1
 			totalQueueLength += len(Tills[i].queue.inQueue)
 		}
 	}
-	avgQueueLength := totalQueueLength / len(Tills)
+	avgQueueLength := totalQueueLength / totalOpenTills
 	return avgQueueLength
 }
 
