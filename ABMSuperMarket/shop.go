@@ -102,21 +102,17 @@ func randomPause(max int) {
 	time.Sleep(time.Millisecond * time.Duration(rand.Intn(max*1000)))
 }
 
+
 func timeLoop() {
-	for {
-		if shop.timeOfDay == 540 {
-			shop.shopOpened = true
-		}
-		if shop.timeOfDay == 1320 {
-			shop.shopOpened = false
-		}
-
-		shop.timeOfDay = shop.timeOfDay + 1
-		time.Sleep(5 * time.Millisecond)
-
+for {
+	    shop.shopOpened=true
+	     time.Sleep(30 * time.Millisecond)
+	     shop.shopOpened=false
+	     daysOfSimulation--
 	}
-
 }
+
+
 
 func setCovid() {
 
