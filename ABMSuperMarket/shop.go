@@ -93,7 +93,7 @@ func addCustomerToShop() {
 
 		}
 		//every 10 sec a customer will be added to the shop
-		time.Sleep(10 * time.Second)
+		time.Sleep(4 * time.Second)
 	}
 }
 
@@ -482,6 +482,9 @@ func main() {
 				customersInShop = customersInShop[:len(customersInShop)-1]
 			}
 
+		} else {
+			fmt.Println("Waiting for customers\n")
+			time.Sleep(3 * time.Second)
 		}
 
 		//just testing sleep timer of 3 secs
