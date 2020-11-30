@@ -96,17 +96,14 @@ func randomPause(max int) {
 	time.Sleep(time.Millisecond * time.Duration(rand.Intn(max*1000)))
 }
 
-
 func timeLoop() {
-for {
-	    shop.shopOpened=true
-	     time.Sleep(30 * time.Millisecond)
-	     shop.shopOpened=false
-	     daysOfSimulation--
+	for {
+		shop.shopOpened = true
+		time.Sleep(30 * time.Millisecond)
+		shop.shopOpened = false
+		daysOfSimulation--
 	}
 }
-
-
 
 func setCovid() {
 	level := randomNumber(1, 5)
@@ -125,7 +122,7 @@ func setCovid() {
 	default:
 		shop.maxCapacity = 100
 	}
-	fmt.Printf("Current Covid-19 Restriction Level: %d\nMax Customers Allowed to Enter: %d", level, shop.maxCapacity)
+	fmt.Printf("Current Covid-19 Restriction Level: %d\nMax Customers Allowed to Enter: %d\n", level, shop.maxCapacity)
 }
 
 func openShop() {
