@@ -11,7 +11,7 @@ import (
 func UNUSED(x ...interface{}) {}
 
 var mutex = &sync.Mutex{}
-var daysOfSimulation int = 3
+var daysOfSimulation int = 1
 var foreNames = []string{"Brian", "Evan", "Martin", "Robert"}
 var surNames = []string{"Hogarty", "Callaghan", "Miller", "Robson"}
 
@@ -61,7 +61,7 @@ func randomNumber(min int, max int) int {
 
 func addCustomerToShop() {
 	for {
-		if len(arrivingCustomers) > 0  && len(customersInShop)< shop.maxCapacity{
+		if len(arrivingCustomers) > 0  && len(customersInShop)< shop.maxCapacity && shop.shopOpened==true{
 			mutex.Lock()
 			randNum := randomNumber(0, len(arrivingCustomers)-1)
 			if arrivingCustomers[randNum].hasMask == true {
@@ -97,9 +97,11 @@ func randomPause(max int) {
 
 func timeLoop() {
 for {
-	    shop.shopOpened=true
+	     shop.shopOpened=true
+	     println("Shop Is open,Welcome ")
 	     time.Sleep(60 * time.Second)
 	     shop.shopOpened=false
+	     println("shop is closed no more people allowed to enter")
 	     time.Sleep(60 * time.Second)
 	     daysOfSimulation--
 	}
@@ -277,9 +279,7 @@ func testPrintAllCustomersInShop() {
 
 func processItems(i int) {
 	Tills[i].queue.isBusy = true
-	mutex.Lock()
-	stat.totalProductsProcessed = stat.totalProductsProcessed + Tills[i].queue.inQueue[0].items
-	mutex.Unlock()
+	
 	for j := Tills[i].queue.inQueue[0].items; j != 0; j-- {
 		time.Sleep(500 * time.Millisecond)
 		
@@ -320,6 +320,7 @@ func getAvgTimes(x []int64) int64 {
 
 func processCustomers() {
 	for {
+	    
 		for i := 0; i < len(Tills); i++ {
 			if Tills[i].isOpen {
 				if len(Tills[i].queue.inQueue) == 0 {
@@ -330,14 +331,14 @@ func processCustomers() {
 				//process the first customer in queue
 				fmt.Printf("Processing customer %s at %s\n\n",
 					Tills[i].queue.inQueue[0].name, Tills[i].name)
-				mutex.Lock()
-
+				
+                           
+				if !Tills[i].queue.isBusy {
+				    mutex.Lock()
+	stat.totalProductsProcessed = stat.totalProductsProcessed + Tills[i].queue.inQueue[0].items
 				waitTime := makeTimestamp() - Tills[i].queue.inQueue[0].arrival
 				stat.waitTimes = append(stat.waitTimes, waitTime)
-
-				mutex.Unlock()
-
-				if !Tills[i].queue.isBusy {
+	mutex.Unlock()
 					go processItems(i)
 				}
 			} else {
@@ -348,7 +349,8 @@ func processCustomers() {
 				}
 			}
 		}
-		time.Sleep(500 * time.Millisecond)
+		
+		time.Sleep(50 * time.Millisecond)
 	}
 }
 
@@ -415,4 +417,3 @@ func main() {
 	}
 	printStat()
 }
-
