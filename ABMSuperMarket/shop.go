@@ -402,7 +402,7 @@ func main() {
 	Tills[4] = *newTill("Till 4", false, false, 1)
 	Tills[5] = *newTill("Till 5", false, false, 1)
 
-	for daysOfSimulation > 0 || len(customersInShop) {
+	for daysOfSimulation > 0 || len(customersInShop)>0 {
 		if len(customersInShop) > 0 {
 			randNum := randomNumber(0, len(customersInShop)-1)
 			mutex.Lock()
@@ -435,4 +435,4 @@ func main() {
 
 	}
 	printStat()
-}
+	println("Thank you and goodbye")
