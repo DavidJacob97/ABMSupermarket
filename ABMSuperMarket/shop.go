@@ -231,7 +231,7 @@ func generateCustomers() {
 		name := foreName
 
 		customer := Customer{name: name}
-		if randomNumber(1 , 60)%3 = 2{
+		if randomNumber(1 , 60)%3 == 2{
 			customer.hasMask = false
 		} else {
 			customer.hasMask = true
