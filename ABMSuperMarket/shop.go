@@ -205,14 +205,16 @@ func closeTill(t Till) {
 
 func getAvgQueueLength() int {
 
-	allQueues := Tills
 	totalQueueLength := 0
-
-	for i := 0; i < 6; i++ {
-		totalQueueLength = len(allQueues[i].queue.inQueue)
+	openQueues := 0
+	for i := 0; i < len(Tills); i++ {
+		if Tills[i].isOpen {
+			totalQueueLength += len(Tills[i].queue.inQueue)
+			openQueues++
+		}
 	}
 
-	avgQueueLength := totalQueueLength / len(Tills)
+	avgQueueLength := totalQueueLength / openQueues
 	return avgQueueLength
 }
 
@@ -389,6 +391,13 @@ func processCustomers() {
 	for {
 		for i := 0; i < len(Tills); i++ {
 			if Tills[i].isOpen {
+				avgQueueLength := getAvgQueueLength()
+				fmt.Printf("average =  %d\n", avgQueueLength)
+				if avgQueueLength > 4 {
+					Tills[i].isOpen = true
+
+					fmt.Printf("new Till Opened %t", Tills[i].isOpen)
+				}
 				if len(Tills[i].queue.inQueue) == 0 {
 					fmt.Printf("No customers currently in queue at %s\n", Tills[i].name)
 					continue
@@ -405,10 +414,7 @@ func processCustomers() {
 			} else {
 
 				//we open another till if avg queue length is greater than 5
-				avgQueueLength := getAvgQueueLength()
-				if avgQueueLength > 5 {
-					Tills[i].isOpen = true
-				}
+
 			}
 
 		}
