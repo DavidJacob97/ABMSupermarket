@@ -299,6 +299,7 @@ func processItems(i int) {
 	Tills[i].queue.inQueue = Tills[i].queue.inQueue[:len(Tills[i].queue.inQueue)-1]
 	Tills[i].queue.isBusy = false
 	mutex.Unlock()
+	
 }
 
 func getAvgItems(x []int) float64 {
