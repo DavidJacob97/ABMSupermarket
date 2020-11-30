@@ -350,7 +350,7 @@ func processItems(i int) {
 
 	mutex.Unlock()
 	for j := Tills[i].queue.inQueue[0].items; j != 0; j-- {
-		time.Sleep(time.Duration(Tills[i].queue.itemProcessingTime) * time.Second)
+		time.Sleep(time.Duration(Tills[i].queue.itemProcessingTime) * time.time.Millisecond)
 		fmt.Printf("Processed item %d for customer %s at %s\n", j, Tills[i].queue.inQueue[0].name, Tills[i].name)
 	}
 
