@@ -34,9 +34,9 @@ type ShopStat struct {
 	waitTimes                  []int64
 	totalProductsProcessed     int
 	averageCustomerWaitTime    int64
-	averageCheckoutUtilisation float64
+	
 	averageProductsPerTrolley  int
-	theNumberOfLostCustomers   int
+	
 }
 
 var shop Shop
@@ -354,9 +354,9 @@ func printStat() {
 	stat.averageProductsPerTrolley = int(stat.totalProductsProcessed / len(stat.waitTimes))
 	println(stat.totalProductsProcessed)
 	fmt.Printf("Average Customer Wait Time: %d\nSize: %d\n", stat.averageCustomerWaitTime, len(stat.waitTimes))
-	println(stat.averageCheckoutUtilisation)
+	
 	println(stat.averageProductsPerTrolley)
-	println(stat.theNumberOfLostCustomers)
+	
 }
 
 func main() {
