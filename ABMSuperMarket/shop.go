@@ -404,15 +404,9 @@ func processCustomers() {
 				}
 			} else {
 
-				//we open another till if avg queue length is greater than the number of customers divided by open tills
-				numofOpenTills := 0
-				for k := 0; k < len(Tills); k++ {
-					if Tills[k].isOpen {
-						numofOpenTills++
-					}
-				}
+				//we open another till if avg queue length is greater than 5
 				avgQueueLength := getAvgQueueLength()
-				if avgQueueLength > len(customersInShop)/numofOpenTills {
+				if avgQueueLength > 5 {
 					Tills[i].isOpen = true
 				}
 			}
