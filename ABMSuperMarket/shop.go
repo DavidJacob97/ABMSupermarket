@@ -34,9 +34,9 @@ type ShopStat struct {
 	waitTimes                  []int64
 	totalProductsProcessed     int
 	averageCustomerWaitTime    int64
-	averageCheckoutUtilisation float64
+	
 	averageProductsPerTrolley  int
-	theNumberOfLostCustomers   int
+	
 }
 
 var shop Shop
@@ -378,9 +378,9 @@ func printStat() {
 	stat.averageProductsPerTrolley = int(stat.totalProductsProcessed / len(stat.waitTimes))
 	println(stat.totalProductsProcessed)
 	fmt.Printf("Average Customer Wait Time: %d\nSize: %d\n", stat.averageCustomerWaitTime, len(stat.waitTimes))
-	println(stat.averageCheckoutUtilisation)
+	
 	println(stat.averageProductsPerTrolley)
-	println(stat.theNumberOfLostCustomers)
+	
 }
 
 func main() {
@@ -402,7 +402,7 @@ func main() {
 	Tills[4] = *newTill("Till 4", false, false, 1)
 	Tills[5] = *newTill("Till 5", false, false, 1)
 
-	for daysOfSimulation > 0 {
+	for daysOfSimulation > 0 || len(customersInShop) {
 		if len(customersInShop) > 0 {
 			randNum := randomNumber(0, len(customersInShop)-1)
 			mutex.Lock()
