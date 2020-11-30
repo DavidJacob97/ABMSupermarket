@@ -1,4 +1,3 @@
-
 package main
 
 import (
@@ -89,7 +88,7 @@ func addCustomerToShop() {
 
 		}
 		//every 10 sec a customer will be added to the shop
-		time.Sleep(4 * time.Second)
+		time.Sleep(300 * time.Millisecond)
 	}
 }
 
@@ -101,9 +100,9 @@ func randomPause(max int) {
 func timeLoop() {
 for {
 	    shop.shopOpened=true
-	     time.Sleep(2500 * time.Second)
+	     time.Sleep(60 * time.Second)
 	     shop.shopOpened=false
-	     time.Sleep(1000 * time.Second)
+	     time.Sleep(60 * time.Second)
 	     daysOfSimulation--
 	}
 }
@@ -244,7 +243,7 @@ func generateCustomers() {
 		//}
 		//generate new customer every 5 sec
 
-		time.Sleep(time.Duration(5 * time.Second))
+		time.Sleep(time.Duration(200 * time.Millisecond))
 	}
 }
 
@@ -284,8 +283,8 @@ func processItems(i int) {
 	stat.totalProductsProcessed = stat.totalProductsProcessed + Tills[i].queue.inQueue[0].items
 	mutex.Unlock()
 	for j := Tills[i].queue.inQueue[0].items; j != 0; j-- {
-		time.Sleep(time.Duration(Tills[i].queue.itemProcessingTime) * time.Millisecond)
-		fmt.Printf("Processed item %d for customer %s at %s\n", j, Tills[i].queue.inQueue[0].name, Tills[i].name)
+		time.Sleep(500 * time.Millisecond)
+		
 	}
 
 	fmt.Printf("Customer %s has checked out\n", Tills[i].queue.inQueue[0].name)
@@ -375,20 +374,21 @@ func main() {
 	shop.handSanitizerRemaining = 50
 	go timeLoop()
 
-	Tills[0] = *newTill("Fast track", true, true, 300)
-	Tills[1] = *newTill("Till 1", false, true, 500)
-	Tills[2] = *newTill("Till 2", false, false, 500)
-	Tills[3] = *newTill("Till 3", false, false, 500)
-	Tills[4] = *newTill("Till 4", false, false, 500)
-	Tills[5] = *newTill("Till 5", false, false, 500)
+	Tills[0] = *newTill("Fast track", true, true, 1)
+	Tills[1] = *newTill("Till 1", false, true, 1)
+	Tills[2] = *newTill("Till 2", false, false, 1)
+	Tills[3] = *newTill("Till 3", false, false, 1)
+	Tills[4] = *newTill("Till 4", false, false, 1)
+	Tills[5] = *newTill("Till 5", false, false, 1)
 
 	for daysOfSimulation > 0 {
 		if len(customersInShop) > 0 {
 			randNum := randomNumber(0, len(customersInShop)-1)
+			 mutex.Lock()
 			c := customersInShop[randNum]
 			if c.items > 6 {
 				t := findBestTill()
-
+                
 				t.queue.inQueue = append(t.queue.inQueue, c)
 				fmt.Printf("Customer %s has entered the queue at %s\n", c.name, t.name)
 
@@ -406,6 +406,7 @@ func main() {
 				customersInShop[len(customersInShop)-1] = e
 				customersInShop = customersInShop[:len(customersInShop)-1]
 			}
+			 mutex.Unlock()
 		} else {
 			//fmt.Println("Waiting for customers\n")
 		}
@@ -414,3 +415,4 @@ func main() {
 	}
 	printStat()
 }
+
