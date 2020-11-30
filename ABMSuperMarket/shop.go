@@ -32,6 +32,7 @@ type Shop struct {
 
 // ShopStat gives back info about how well our shop is doing
 type ShopStat struct {
+	
 	waitTimes                  []int64
 	totalProductsProcessed     int
 	averagecustomerwaitTime    int64
@@ -461,7 +462,7 @@ func main() {
 	Tills[4] = *newTill("Till 4", false, false, 3)
 	Tills[5] = *newTill("Till 5", false, false, 3)
 
-	for {
+	for  daysOfSimulation>0 {
 
 		//calling processCustomer for each till for processing the customers in queue
 
@@ -501,8 +502,7 @@ func main() {
 
 	}
 
-	stat.averagecustomerwaitTime = getAvgTimes(stat.waitTimes)
-	stat.averageproductspertrolley = stat.totalProductsProcessed / len(stat.waitTimes)
+	
 
 	printstat()
 
