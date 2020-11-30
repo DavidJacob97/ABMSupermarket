@@ -11,7 +11,7 @@ import (
 func UNUSED(x ...interface{}) {}
 
 var mutex = &sync.Mutex{}
-var daysOfSimulation int = 7
+var daysOfSimulation int = 3
 var foreNames = []string{"Brian", "Evan", "Martin", "Robert"}
 var surNames = []string{"Hogarty", "Callaghan", "Miller", "Robson"}
 
@@ -32,9 +32,9 @@ type Shop struct {
 
 // ShopStat gives back info about how well our shop is doing
 type ShopStat struct {
-	waitTimes                  []float64
+	waitTimes                  []int64
 	totalProductsProcessed     int
-	averagecustomerwaitTime    int
+	averagecustomerwaitTime    int64
 	averagecheckoututilisation float64
 	averageproductspertrolley  int
 	Thenumberoflostcustomers   int
@@ -49,7 +49,7 @@ type Customer struct {
 	patience int
 	hasMask  bool
 	items    int
-	Arrival  float64
+	Arrival  int64
 	Checkout float64
 }
 
@@ -63,7 +63,7 @@ func randomNumber(min int, max int) int {
 }
 
 func addCustomerToShop() {
-	for {
+	for{
 		//this part will remove the customer if he is not wearing mask
 		if len(arrivingCustomers) > 0 {
 			mutex.Lock()
@@ -200,16 +200,14 @@ func closeTill(t Till) {
 
 func getAvgQueueLength() int {
 
+	allQueues := Tills
 	totalQueueLength := 0
-	openQueues := 0
-	for i := 0; i < len(Tills); i++ {
-		if Tills[i].isOpen {
-			totalQueueLength += len(Tills[i].queue.inQueue)
-			openQueues++
-		}
+
+	for i := 0; i < 6; i++ {
+		totalQueueLength = len(allQueues[i].queue.inQueue)
 	}
 
-	avgQueueLength := totalQueueLength / openQueues
+	avgQueueLength := totalQueueLength / len(Tills)
 	return avgQueueLength
 }
 
@@ -258,7 +256,11 @@ func findBestTill() *Till {
 	}
 	return &Tills[shortestQueue]
 }
-
+func makeTimestamp() int64 {
+    return time.Now().UnixNano() / int64(time.Millisecond)
+	
+	
+}
 func generateCustomers() {
 	for {
 		//if shop.customerInstore < shop.maxCapacity && shop.shopOpened == true {
@@ -277,8 +279,7 @@ func generateCustomers() {
 		arrivingCustomers = append(arrivingCustomers, customer)
 		mutex.Unlock()
 		shop.customerInstore = shop.customerInstore + 1
-		now := time.Now() 
-		customer.Arrival= float64(now.Unix())
+		customer.Arrival=makeTimestamp()
 		shop.customerInstore = shop.customerInstore + 1
 		//}
 		//generate new customer every 5 sec
@@ -345,9 +346,7 @@ func processItems(i int) {
 	Tills[i].queue.isBusy = true
 	mutex.Lock()
 	stat.totalProductsProcessed= stat.totalProductsProcessed + Tills[i].queue.inQueue[0].items
-	now := time.Now() 
-		waitTime:= float64(now.Unix())-Tills[i].queue.inQueue[0].Arrival
-		stat.waitTimes=append(stat.waitTimes,waitTime)
+	
 	mutex.Unlock()
 	for j := Tills[i].queue.inQueue[0].items; j != 0; j-- {
 		time.Sleep(time.Duration(Tills[i].queue.itemProcessingTime) * time.Second)
@@ -367,15 +366,15 @@ func processItems(i int) {
 }
 
 
-func getAvgTimes(x []float64) int {
+func getAvgTimes(x []int64) int64 {
 	n := len(x)
-	sum := 0.00
+	var sum int64
 	for i := 0; i < n; i++ {
 
-		sum += (x[i])
+		sum = sum + (x[i])
 	}
 
-	avg := int((float64(sum)) / (float64(n)))
+	avg := int64((float64(sum)) / (float64(n)))
 	return avg
 
 }
@@ -383,13 +382,6 @@ func processCustomers() {
 	for {
 		for i := 0; i < len(Tills); i++ {
 			if Tills[i].isOpen {
-				avgQueueLength := getAvgQueueLength()
-				fmt.Printf("average =  %d\n", avgQueueLength)
-				if avgQueueLength > 4 {
-					Tills[i].isOpen = true
-
-					fmt.Printf("new Till Opened %t", Tills[i].isOpen)
-				}
 				if len(Tills[i].queue.inQueue) == 0 {
 					fmt.Printf("No customers currently in queue at %s\n", Tills[i].name)
 					continue
@@ -398,15 +390,25 @@ func processCustomers() {
 				//process the first customer in queue
 				fmt.Printf("Processing customer %s at %s\n\n",
 					Tills[i].queue.inQueue[0].name, Tills[i].name)
+					mutex.Lock()
+					
+		    waitTime:= makeTimestamp()-Tills[i].queue.inQueue[0].Arrival
+	    	stat.waitTimes=append(stat.waitTimes,waitTime)
+	    	
+	    	
+					mutex.Unlock()
 
-				stat.waitTimes = append(stat.waitTimes, (shop.timeOfDay - Tills[i].queue.inQueue[0].Arrival))
+				
 				if !Tills[i].queue.isBusy {
 					go processItems(i)
 				}
 			} else {
 
 				//we open another till if avg queue length is greater than 5
-
+				avgQueueLength := getAvgQueueLength()
+				if avgQueueLength > 5 {
+					Tills[i].isOpen = true
+				}
 			}
 
 		}
@@ -418,7 +420,7 @@ func printstat() {
     stat.averagecustomerwaitTime = getAvgTimes(stat.waitTimes)  
     stat.averageproductspertrolley =  int(stat.totalProductsProcessed/len(stat.waitTimes))
 	println(stat.totalProductsProcessed)    
-	println(stat.averagecustomerwaitTime/100000000)    
+fmt.Printf("%d \n",stat.averagecustomerwaitTime)    
 println(stat.averagecheckoututilisation)
 	println(stat.averageproductspertrolley) 
 	println(stat.Thenumberoflostcustomers)
@@ -476,7 +478,7 @@ func main() {
 			}
 
 		} else {
-			fmt.Println("Waiting for customers\n")
+			//fmt.Println("Waiting for customers\n")
 			time.Sleep(3 * time.Second)
 		}
 
