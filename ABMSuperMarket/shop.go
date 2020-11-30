@@ -34,7 +34,7 @@ type Shop struct {
 type ShopStat struct {
 	waitTimes                  []float64
 	totalProductsProcessed     int
-	averagecustomerwaitTime    float64
+	averagecustomerwaitTime    int
 	averagecheckoututilisation float64
 	averageproductspertrolley  int
 	Thenumberoflostcustomers   int
@@ -103,16 +103,13 @@ func randomPause(max int) {
 
 func timeLoop() {
 	for {
-		if shop.timeOfDay == 540 {
-			shop.shopOpened = true
-		}
-		if shop.timeOfDay == 1320 {
-			shop.shopOpened = false
-		}
-
-		shop.timeOfDay = shop.timeOfDay + 1
-		time.Sleep(5 * time.Millisecond)
-
+		print(daysOfSimulation)
+		shop.shopOpened=true
+		time.Sleep(20 * time.Second)
+		shop.shopOpened=false
+		daysOfSimulation=daysOfSimulation-1
+		time.Sleep(20 * time.Second)
+  
 	}
 
 }
@@ -151,7 +148,7 @@ func openShop() {
 				setCovid()
 				shop.daysRemaining = 7
 			}
-			customer()
+			
 			handSanitizer()
 
 			time.Sleep(5 * time.Millisecond)
@@ -164,13 +161,11 @@ func openShop() {
 	fmt.Println("close all tills")
 	fmt.Println("close shop")
 
-	shop.timeOfDay = 540
+	
 
 }
 
-func customer() {
-	shop.handSanitizerRemaining = shop.handSanitizerRemaining - 1
-}
+
 
 func handSanitizer() {
 	if shop.handSanitizerRemaining == 0 {
@@ -282,6 +277,9 @@ func generateCustomers() {
 		arrivingCustomers = append(arrivingCustomers, customer)
 		mutex.Unlock()
 		shop.customerInstore = shop.customerInstore + 1
+		now := time.Now() 
+		customer.Arrival= float64(now.Unix())
+		shop.customerInstore = shop.customerInstore + 1
 		//}
 		//generate new customer every 5 sec
 		time.Sleep(time.Duration(5 * time.Second))
@@ -345,7 +343,12 @@ func testPrintAllCustomersInShop() {
 
 func processItems(i int) {
 	Tills[i].queue.isBusy = true
-
+	mutex.Lock()
+	stat.totalProductsProcessed= stat.totalProductsProcessed + Tills[i].queue.inQueue[0].items
+	now := time.Now() 
+		waitTime:= float64(now.Unix())-Tills[i].queue.inQueue[0].Arrival
+		stat.waitTimes=append(stat.waitTimes,waitTime)
+	mutex.Unlock()
 	for j := Tills[i].queue.inQueue[0].items; j != 0; j-- {
 		time.Sleep(time.Duration(Tills[i].queue.itemProcessingTime) * time.Second)
 		fmt.Printf("Processed item %d for customer %s at %s\n", j, Tills[i].queue.inQueue[0].name, Tills[i].name)
@@ -363,19 +366,8 @@ func processItems(i int) {
 
 }
 
-func getAvgItems(x []int) float64 {
-	n := len(x)
-	sum := 0
-	for i := 0; i < n; i++ {
 
-		sum += (x[i])
-	}
-
-	avg := (float64(sum)) / (float64(n))
-	return avg
-}
-
-func getAvgTimes(x []float64) float64 {
+func getAvgTimes(x []float64) int {
 	n := len(x)
 	sum := 0.00
 	for i := 0; i < n; i++ {
@@ -383,7 +375,7 @@ func getAvgTimes(x []float64) float64 {
 		sum += (x[i])
 	}
 
-	avg := (float64(sum)) / (float64(n))
+	avg := int((float64(sum)) / (float64(n)))
 	return avg
 
 }
@@ -423,14 +415,15 @@ func processCustomers() {
 }
 
 func printstat() {
-	stat.averagecustomerwaitTime = getAvgTimes(stat.waitTimes)
-	stat.averageproductspertrolley = stat.totalProductsProcessed / len(stat.waitTimes)
-	print(stat.waitTimes)
-	print(stat.totalProductsProcessed)
-	print(stat.averagecustomerwaitTime)
-	print(stat.averagecheckoututilisation)
-	print(stat.averageproductspertrolley)
-	print(stat.Thenumberoflostcustomers)
+    stat.averagecustomerwaitTime = getAvgTimes(stat.waitTimes)  
+    stat.averageproductspertrolley =  int(stat.totalProductsProcessed/len(stat.waitTimes))
+	println(stat.totalProductsProcessed)    
+	println(stat.averagecustomerwaitTime/100000000)    
+println(stat.averagecheckoututilisation)
+	println(stat.averageproductspertrolley) 
+	println(stat.Thenumberoflostcustomers)
+	
+
 }
 
 func main() {
@@ -445,7 +438,7 @@ func main() {
 	go processCustomers()
 	//shop.timeOfDay = 540
 	//shop.handSanitizerRemaining = 100
-	//go timeLoop()
+	go timeLoop()
 
 	Tills[0] = *newTill("Fast track", true, true, 2)
 	Tills[1] = *newTill("Till 1", false, true, 3)
@@ -454,7 +447,7 @@ func main() {
 	Tills[4] = *newTill("Till 4", false, false, 3)
 	Tills[5] = *newTill("Till 5", false, false, 3)
 
-	for {
+	for daysOfSimulation>0 {
 
 		//calling processCustomer for each till for processing the customers in queue
 
@@ -494,9 +487,7 @@ func main() {
 
 	}
 
-	stat.averagecustomerwaitTime = getAvgTimes(stat.waitTimes)
-	stat.averageproductspertrolley = stat.totalProductsProcessed / len(stat.waitTimes)
-
+	
 	printstat()
 
 }
