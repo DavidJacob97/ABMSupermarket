@@ -66,14 +66,14 @@ func addCustomerToShop() {
 			randNum := randomNumber(0, len(arrivingCustomers)-1)
 			if arrivingCustomers[randNum].hasMask == true {
 				customersInShop = append(customersInShop, arrivingCustomers[randNum])
-
+                   arrivingCustomers[randNum] .arrival = makeTimestamp()
 				fmt.Printf("Customer %s has entered the shop\n", arrivingCustomers[randNum].name)
 
 				copy(arrivingCustomers[randNum:], arrivingCustomers[randNum+1:])
 				e := Customer{}
 				arrivingCustomers[len(arrivingCustomers)-1] = e
 				arrivingCustomers = arrivingCustomers[:len(arrivingCustomers)-1]
-
+                        
 				shop.handSanitizerRemaining--
 			} else {
 				fmt.Printf("Customer %s does not have a mask and was refused entry\n", arrivingCustomers[randNum].name)
@@ -202,9 +202,9 @@ func fastTrackOrStandard(c Customer) {
 // Locates the shortest queue out of the 5 standard tills using Tills var
 func findBestTill() *Till {
 	shortestQueue := 1
-	for i := 1; i < len(Tills); i++ {
+	for i := 1; i < len(Tills)-1; i++ {
 		if Tills[i].isOpen {
-			for j := 1; j < len(Tills); j++ {
+			for j := 1; j < len(Tills)-1; j++ {
 				if Tills[j].isOpen {
 					if len(Tills[i].queue.inQueue) < len(Tills[j].queue.inQueue) {
 						shortestQueue = i
@@ -217,7 +217,7 @@ func findBestTill() *Till {
 }
 
 func makeTimestamp() int64 {
-	return time.Now().UnixNano() / int64(time.Millisecond)
+	return time.Now().UnixNano() / int64(time.Second)
 }
 
 func generateCustomers() {
@@ -240,7 +240,7 @@ func generateCustomers() {
 		arrivingCustomers = append(arrivingCustomers, customer)
 		mutex.Unlock()
 		shop.customerInStore += 1
-		customer.arrival = makeTimestamp()
+		
 
 		}
 		//generate new customer every 5 sec
@@ -312,6 +312,7 @@ func getAvgTimes(x []int64) int64 {
 	var sum int64
 	for i := 0; i < n; i++ {
 		sum = sum + (x[i])
+		println(x[i])
 	}
 	avg := int64((float64(sum)) / (float64(n)))
 	return avg
@@ -358,7 +359,7 @@ func printStat() {
 	stat.averageCustomerWaitTime = getAvgTimes(stat.waitTimes)
 	stat.averageProductsPerTrolley = int(stat.totalProductsProcessed / len(stat.waitTimes))
 	println(stat.totalProductsProcessed)
-	fmt.Printf("Average Customer Wait Time: %d\n", stat.averageCustomerWaitTime)
+	fmt.Printf("Average Customer Wait Time: %d\n", stat.averageCustomerWaitTime/1000000)
 	println(stat.averageCheckoutUtilisation)
 	println(stat.averageProductsPerTrolley)
 	println(stat.theNumberOfLostCustomers)
