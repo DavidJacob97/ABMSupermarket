@@ -224,7 +224,7 @@ func makeTimestamp() int64 {
 
 func generateCustomers() {
 	for  daysOfSimulation>0 {
-		//if shop.customerInstore < shop.maxCapacity && shop.shopOpened == true {
+		if  len(allCustomers) < shop.maxCapacity {
 		r := rand.Intn(len(foreNames))
 		foreName := foreNames[r]
 
@@ -244,7 +244,7 @@ func generateCustomers() {
 		shop.customerInStore += 1
 		customer.arrival = makeTimestamp()
 
-		//}
+		}
 		//generate new customer every 5 sec
 
 		time.Sleep(time.Duration(200 * time.Millisecond))
