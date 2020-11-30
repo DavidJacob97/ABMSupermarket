@@ -73,7 +73,7 @@ func addCustomerToShop() {
 				e := Customer{}
 				arrivingCustomers[len(arrivingCustomers)-1] = e
 				arrivingCustomers = arrivingCustomers[:len(arrivingCustomers)-1]
-                        
+
 				shop.handSanitizerRemaining--
 			} else {
 				fmt.Printf("Customer %s does not have a mask and was refused entry\n", arrivingCustomers[randNum].name)
@@ -132,7 +132,6 @@ func handSanitizer() {
 		fmt.Println("Refilling hand sanitizer")
 		shop.handSanitizerRemaining = 100
 	}
-
 }
 
 // Queue has processing item time and Customers array queue
@@ -240,10 +239,14 @@ func generateCustomers() {
 			arrivingCustomers = append(arrivingCustomers, customer)
 			mutex.Unlock()
 			shop.customerInStore += 1
+
+			time.Sleep(time.Duration(200 * time.Millisecond))
+			//if shop.customerInStore > 10 {
+			//	fmt.Printf("Exit\n")
+			//	return
+			//}
 		}
 		//generate new customer every 5 sec
-
-		time.Sleep(time.Duration(200 * time.Millisecond))
 	}
 }
 
@@ -336,10 +339,31 @@ func processCustomers() {
 				if !Tills[i].queue.isBusy {
 					go processItems(i)
 				}
+
+				avgQueueLength := getAvgQueueLength()
+				if avgQueueLength < 2 {
+					totalOpenTills := 0
+					for i := 1; i < len(Tills); i++ {
+						if Tills[i].isOpen {
+							totalOpenTills += 1
+						}
+					}
+					fmt.Printf("totalOpenTills %d\n", totalOpenTills)
+					if totalOpenTills != 1 {
+						Tills[i].isOpen = false
+						fmt.Printf("Closing %s\n", Tills[i].name)
+					}
+				}
 			} else {
+				if len(Tills[i].queue.inQueue) != 0 {
+					if !Tills[i].queue.isBusy {
+						go processItems(i)
+					}
+				}
 				//We open another till if average queue length for each open till is greater than 5
 				avgQueueLength := getAvgQueueLength()
 				if avgQueueLength > 5 {
+					fmt.Printf("Opening %s\n", Tills[i].name)
 					Tills[i].isOpen = true
 				}
 			}
