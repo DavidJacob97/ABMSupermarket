@@ -44,10 +44,10 @@ var stat ShopStat
 
 //Customer object, possibly not enter cause of a mask, carries items
 type Customer struct {
-	name     string
-	hasMask  bool
-	items    int
-	arrival  int64
+	name    string
+	hasMask bool
+	items   int
+	arrival int64
 }
 
 var arrivingCustomers []Customer
@@ -61,12 +61,12 @@ func randomNumber(min int, max int) int {
 
 func addCustomerToShop() {
 	for {
-		if len(arrivingCustomers) > 0  && len(customersInShop)< shop.maxCapacity && shop.shopOpened==true{
+		if len(arrivingCustomers) > 0 && len(customersInShop) < shop.maxCapacity && shop.shopOpened == true {
 			mutex.Lock()
 			randNum := randomNumber(0, len(arrivingCustomers)-1)
 			if arrivingCustomers[randNum].hasMask == true {
+				arrivingCustomers[randNum].arrival = makeTimestamp()
 				customersInShop = append(customersInShop, arrivingCustomers[randNum])
-
 				fmt.Printf("Customer %s has entered the shop\n", arrivingCustomers[randNum].name)
 
 				copy(arrivingCustomers[randNum:], arrivingCustomers[randNum+1:])
@@ -96,14 +96,14 @@ func randomPause(max int) {
 }
 
 func timeLoop() {
-for {
-	     shop.shopOpened=true
-	     println("Shop Is open,Welcome ")
-	     time.Sleep(60 * time.Second)
-	     shop.shopOpened=false
-	     println("shop is closed no more people allowed to enter")
-	     time.Sleep(60 * time.Second)
-	     daysOfSimulation--
+	for {
+		shop.shopOpened = true
+		println("Shop Is open,Welcome ")
+		time.Sleep(60 * time.Second)
+		shop.shopOpened = false
+		println("shop is closed no more people allowed to enter")
+		time.Sleep(60 * time.Second)
+		daysOfSimulation--
 	}
 }
 
@@ -126,7 +126,6 @@ func setCovid() {
 	}
 	fmt.Printf("Current Covid-19 Restriction Level: %d\nMax Customers Allowed to Enter: %d", level, shop.maxCapacity)
 }
-
 
 func handSanitizer() {
 	if shop.handSanitizerRemaining == 0 {
@@ -202,9 +201,9 @@ func fastTrackOrStandard(c Customer) {
 // Locates the shortest queue out of the 5 standard tills using Tills var
 func findBestTill() *Till {
 	shortestQueue := 1
-	for i := 1; i < len(Tills)-1; i++ {
+	for i := 1; i < len(Tills); i++ {
 		if Tills[i].isOpen {
-			for j := 1; j < len(Tills)-1; j++ {
+			for j := 1; j < len(Tills); j++ {
 				if Tills[j].isOpen {
 					if len(Tills[i].queue.inQueue) < len(Tills[j].queue.inQueue) {
 						shortestQueue = i
@@ -217,30 +216,31 @@ func findBestTill() *Till {
 }
 
 func makeTimestamp() int64 {
-	return time.Now().UnixNano() / int64(time.Millisecond)
+	now := time.Now()
+	return now.Unix()
 }
 
 func generateCustomers() {
 	for daysOfSimulation > 0 {
 		if len(arrivingCustomers) < (shop.maxCapacity * 2) {
-		r := rand.Intn(len(foreNames))
-		foreName := foreNames[r]
+			r := rand.Intn(len(foreNames))
+			foreName := foreNames[r]
 
-		name := foreName
+			name := foreName
 
-		customer := Customer{name: name}
-		if randomNumber(1 , 60)%3 == 2{
-			customer.hasMask = false
-		} else {
-			customer.hasMask = true
-		}
-		customer.items = randomNumber(1, 200) //to be generated randomly
-		
-		mutex.Lock()
-		arrivingCustomers = append(arrivingCustomers, customer)
-		mutex.Unlock()
-		shop.customerInStore += 1
-		customer.arrival = makeTimestamp()
+			customer := Customer{name: name}
+			if randomNumber(1, 60)%3 == 2 {
+				customer.hasMask = false
+			} else {
+				customer.hasMask = true
+			}
+			customer.items = randomNumber(1, 200) //to be generated randomly
+
+			mutex.Lock()
+			arrivingCustomers = append(arrivingCustomers, customer)
+			mutex.Unlock()
+			shop.customerInStore += 1
+			customer.arrival = makeTimestamp()
 
 		}
 		//generate new customer every 5 sec
@@ -279,16 +279,20 @@ func testPrintAllCustomersInShop() {
 
 func processItems(i int) {
 	Tills[i].queue.isBusy = true
-	
+
 	for j := Tills[i].queue.inQueue[0].items; j != 0; j-- {
 		time.Sleep(500 * time.Millisecond)
-		
 	}
 
 	fmt.Printf("Customer %s has checked out\n", Tills[i].queue.inQueue[0].name)
 
 	//Remove first element in customer slice from queue and maintain order
 	mutex.Lock()
+
+	stat.totalProductsProcessed = stat.totalProductsProcessed + Tills[i].queue.inQueue[0].items
+	stat.waitTimes = append(stat.waitTimes, (makeTimestamp() - Tills[i].queue.inQueue[0].arrival))
+	//fmt.Printf("Secs: %d %d %d\n", makeTimestamp(), Tills[i].queue.inQueue[0].arrival, (makeTimestamp() - Tills[i].queue.inQueue[0].arrival))
+
 	copy(Tills[i].queue.inQueue[0:], Tills[i].queue.inQueue[1:])
 	e := Customer{}
 	Tills[i].queue.inQueue[len(Tills[i].queue.inQueue)-1] = e
@@ -309,18 +313,17 @@ func getAvgItems(x []int) float64 {
 
 func getAvgTimes(x []int64) int64 {
 	n := len(x)
-	var sum int64
+	var sum int64 = 0
 	for i := 0; i < n; i++ {
-		sum = sum + (x[i])
+		sum += x[i]
 	}
-	avg := int64((float64(sum)) / (float64(n)))
+	avg := sum / int64(n)
 	return avg
-
 }
 
 func processCustomers() {
 	for {
-	    
+
 		for i := 0; i < len(Tills); i++ {
 			if Tills[i].isOpen {
 				if len(Tills[i].queue.inQueue) == 0 {
@@ -331,14 +334,8 @@ func processCustomers() {
 				//process the first customer in queue
 				fmt.Printf("Processing customer %s at %s\n\n",
 					Tills[i].queue.inQueue[0].name, Tills[i].name)
-				
-                           
+
 				if !Tills[i].queue.isBusy {
-				    mutex.Lock()
-	stat.totalProductsProcessed = stat.totalProductsProcessed + Tills[i].queue.inQueue[0].items
-				waitTime := makeTimestamp() - Tills[i].queue.inQueue[0].arrival
-				stat.waitTimes = append(stat.waitTimes, waitTime)
-	mutex.Unlock()
 					go processItems(i)
 				}
 			} else {
@@ -349,7 +346,7 @@ func processCustomers() {
 				}
 			}
 		}
-		
+
 		time.Sleep(50 * time.Millisecond)
 	}
 }
@@ -358,7 +355,7 @@ func printStat() {
 	stat.averageCustomerWaitTime = getAvgTimes(stat.waitTimes)
 	stat.averageProductsPerTrolley = int(stat.totalProductsProcessed / len(stat.waitTimes))
 	println(stat.totalProductsProcessed)
-	fmt.Printf("Average Customer Wait Time: %d\n", stat.averageCustomerWaitTime)
+	fmt.Printf("Average Customer Wait Time: %d\nSize: %d\n", stat.averageCustomerWaitTime, len(stat.waitTimes))
 	println(stat.averageCheckoutUtilisation)
 	println(stat.averageProductsPerTrolley)
 	println(stat.theNumberOfLostCustomers)
@@ -386,11 +383,11 @@ func main() {
 	for daysOfSimulation > 0 {
 		if len(customersInShop) > 0 {
 			randNum := randomNumber(0, len(customersInShop)-1)
-			 mutex.Lock()
+			mutex.Lock()
 			c := customersInShop[randNum]
 			if c.items > 6 {
 				t := findBestTill()
-                
+
 				t.queue.inQueue = append(t.queue.inQueue, c)
 				fmt.Printf("Customer %s has entered the queue at %s\n", c.name, t.name)
 
@@ -408,12 +405,12 @@ func main() {
 				customersInShop[len(customersInShop)-1] = e
 				customersInShop = customersInShop[:len(customersInShop)-1]
 			}
-			 mutex.Unlock()
+			mutex.Unlock()
 		} else {
 			//fmt.Println("Waiting for customers\n")
 		}
 		time.Sleep(500 * time.Millisecond)
-		
+
 	}
 	printStat()
 }
