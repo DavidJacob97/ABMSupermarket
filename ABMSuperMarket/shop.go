@@ -402,7 +402,21 @@ func processCustomers() {
 				if !Tills[i].queue.isBusy {
 					go processItems(i)
 				}
+			} else {
+
+				//we open another till if avg queue length is greater than the number of customers divided by open tills
+				numofOpenTills := 0
+				for k := 0; k < len(Tills); k++ {
+					if Tills[k].isOpen {
+						numofOpenTills++
+					}
+				}
+				avgQueueLength := getAvgQueueLength()
+				if avgQueueLength > len(customersInShop)/numofOpenTills {
+					Tills[i].isOpen = true
+				}
 			}
+
 		}
 		time.Sleep(3 * time.Second)
 	}
