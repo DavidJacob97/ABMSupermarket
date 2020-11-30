@@ -202,9 +202,9 @@ func fastTrackOrStandard(c Customer) {
 // Locates the shortest queue out of the 5 standard tills using Tills var
 func findBestTill() *Till {
 	shortestQueue := 1
-	for i := 1; i < len(Tills)-1; i++ {
+	for i := 1; i < len(Tills); i++ {
 		if Tills[i].isOpen {
-			for j := 1; j < len(Tills)-1; j++ {
+			for j := 1; j < len(Tills); j++ {
 				if Tills[j].isOpen {
 					if len(Tills[i].queue.inQueue) < len(Tills[j].queue.inQueue) {
 						shortestQueue = i
