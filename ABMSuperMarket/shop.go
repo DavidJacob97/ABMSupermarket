@@ -284,7 +284,7 @@ func processItems(i int) {
 	stat.totalProductsProcessed = stat.totalProductsProcessed + Tills[i].queue.inQueue[0].items
 	mutex.Unlock()
 	for j := Tills[i].queue.inQueue[0].items; j != 0; j-- {
-		time.Sleep(time.Duration(Tills[i].queue.itemProcessingTime) * time.Second)
+		time.Sleep(time.Duration(Tills[i].queue.itemProcessingTime) * time.Millisecond)
 		fmt.Printf("Processed item %d for customer %s at %s\n", j, Tills[i].queue.inQueue[0].name, Tills[i].name)
 	}
 
@@ -375,12 +375,12 @@ func main() {
 	shop.handSanitizerRemaining = 50
 	go timeLoop()
 
-	Tills[0] = *newTill("Fast track", true, true, 1)
-	Tills[1] = *newTill("Till 1", false, true, 1)
-	Tills[2] = *newTill("Till 2", false, false, 1)
-	Tills[3] = *newTill("Till 3", false, false, 1)
-	Tills[4] = *newTill("Till 4", false, false, 1)
-	Tills[5] = *newTill("Till 5", false, false, 1)
+	Tills[0] = *newTill("Fast track", true, true, 300)
+	Tills[1] = *newTill("Till 1", false, true, 500)
+	Tills[2] = *newTill("Till 2", false, false, 500)
+	Tills[3] = *newTill("Till 3", false, false, 500)
+	Tills[4] = *newTill("Till 4", false, false, 500)
+	Tills[5] = *newTill("Till 5", false, false, 500)
 
 	for daysOfSimulation > 0 {
 		if len(customersInShop) > 0 {
