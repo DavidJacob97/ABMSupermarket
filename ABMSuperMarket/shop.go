@@ -321,7 +321,6 @@ func testPrintAllCustomersInShop() {
 	}
 }
 
-//
 func processItems(i int) {
 	Tills[i].queue.isBusy = true
 	mutex.Lock()
