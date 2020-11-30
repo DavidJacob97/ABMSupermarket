@@ -216,12 +216,8 @@ func findBestTill() *Till {
 }
 
 func makeTimestamp() int64 {
-<<<<<<< HEAD
 	now := time.Now()
 	return now.Unix()
-=======
-	return time.Now().UnixNano() / int64(time.Second)
->>>>>>> 3610daec21973eee9318a9a22561fabd1342d513
 }
 
 func generateCustomers() {
@@ -317,12 +313,7 @@ func getAvgTimes(x []int64) int64 {
 	n := len(x)
 	var sum int64 = 0
 	for i := 0; i < n; i++ {
-<<<<<<< HEAD
 		sum += x[i]
-=======
-		sum = sum + (x[i])
-		println(x[i])
->>>>>>> 3610daec21973eee9318a9a22561fabd1342d513
 	}
 	avg := sum / int64(n)
 	return avg
