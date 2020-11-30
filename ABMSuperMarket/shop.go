@@ -38,9 +38,6 @@ type ShopStat struct {
 	averagecheckoututilisation float64
 	averageproductspertrolley  int
 	Thenumberoflostcustomers   int
-	
-	
-	
 }
 
 var shop Shop
@@ -53,7 +50,7 @@ type Customer struct {
 	hasMask  bool
 	items    int
 	Arrival  float64
-	Checkout  float64
+	Checkout float64
 }
 
 var arrivingCustomers []Customer
@@ -275,10 +272,10 @@ func generateCustomers() {
 		name := foreName
 
 		customer := Customer{name: name}
-		customer.hasMask = true //need some code in some chance
-		customer.items = randomNumber(1,200)     //to be generated randomly
-		customer.patience = 0   //to be generated randomly
-        customer.Checkout= CheckoutTime(foreName,customer.items)
+		customer.hasMask = true               //need some code in some chance
+		customer.items = randomNumber(1, 200) //to be generated randomly
+		customer.patience = 0                 //to be generated randomly
+		customer.Checkout = CheckoutTime(foreName, customer.items)
 		mutex.Lock()
 		arrivingCustomers = append(arrivingCustomers, customer)
 		mutex.Unlock()
@@ -290,28 +287,28 @@ func generateCustomers() {
 	}
 }
 
-func CheckoutTime(name string, items int) float64{
-    
-    var NrofItems float64 = float64(items)
-    totaltime:=0.00
-    if name== "Brian"{
-        totaltime= (NrofItems*shop.ScanTime)*2
-        
-    }
-    
-    if name =="Evan"{
-        totaltime= (NrofItems*shop.ScanTime)*3
-    }
-    
-    if name== "Martin" {
-       totaltime= (NrofItems*shop.ScanTime)*4
-    }
-    
-    if name=="Robert"{
-        totaltime= (NrofItems*shop.ScanTime)*5
-    }
-    
-    return totaltime
+func CheckoutTime(name string, items int) float64 {
+
+	var NrofItems float64 = float64(items)
+	totaltime := 0.00
+	if name == "Brian" {
+		totaltime = (NrofItems * shop.ScanTime) * 2
+
+	}
+
+	if name == "Evan" {
+		totaltime = (NrofItems * shop.ScanTime) * 3
+	}
+
+	if name == "Martin" {
+		totaltime = (NrofItems * shop.ScanTime) * 4
+	}
+
+	if name == "Robert" {
+		totaltime = (NrofItems * shop.ScanTime) * 5
+	}
+
+	return totaltime
 }
 
 func testPrintAllCustomers() {
@@ -346,14 +343,13 @@ func testPrintAllCustomersInShop() {
 
 func processItems(i int) {
 	Tills[i].queue.isBusy = true
-	
+
 	for j := Tills[i].queue.inQueue[0].items; j != 0; j-- {
 		time.Sleep(time.Duration(Tills[i].queue.itemProcessingTime) * time.Second)
 		fmt.Printf("Processed item %d for customer %s at %s\n", j, Tills[i].queue.inQueue[0].name, Tills[i].name)
 	}
 
 	fmt.Printf("Customer %s has checked out\n", Tills[i].queue.inQueue[0].name)
-	  
 
 	//remove first element in customer slice from queue and maintain order
 	copy(Tills[i].queue.inQueue[0:], Tills[i].queue.inQueue[1:])
@@ -362,40 +358,33 @@ func processItems(i int) {
 	Tills[i].queue.inQueue = Tills[i].queue.inQueue[:len(Tills[i].queue.inQueue)-1]
 
 	Tills[i].queue.isBusy = false
-	
-	 
+
 }
- 
- 
- func getAvgItems( x[] int) float64{
-     n := len(x)
-     sum:= 0
-     for i := 0; i < n; i++ { 
-  
-        
-        sum += (x[i]) 
-    } 
-      
-    
-    avg := (float64(sum)) / (float64(n)) 
-    return avg
- }
- 
- 
- func getAvgTimes( x[] float64) float64 {
-      n := len(x)
-     sum:= 0.00
-     for i := 0; i < n; i++ { 
-  
-        
-        sum += (x[i]) 
-    } 
-      
-    
-    avg := (float64(sum)) / (float64(n)) 
-    return avg
-     
- }
+
+func getAvgItems(x []int) float64 {
+	n := len(x)
+	sum := 0
+	for i := 0; i < n; i++ {
+
+		sum += (x[i])
+	}
+
+	avg := (float64(sum)) / (float64(n))
+	return avg
+}
+
+func getAvgTimes(x []float64) float64 {
+	n := len(x)
+	sum := 0.00
+	for i := 0; i < n; i++ {
+
+		sum += (x[i])
+	}
+
+	avg := (float64(sum)) / (float64(n))
+	return avg
+
+}
 func processCustomers() {
 	for {
 		for i := 0; i < len(Tills); i++ {
@@ -407,10 +396,9 @@ func processCustomers() {
 
 				//process the first customer in queue
 				fmt.Printf("Processing customer %s at %s\n\n",
-				Tills[i].queue.inQueue[0].name, Tills[i].name)
-                
-               
-               stat.waitTimes = append( stat.waitTimes,(shop.timeOfDay-Tills[i].queue.inQueue[0].Arrival))
+					Tills[i].queue.inQueue[0].name, Tills[i].name)
+
+				stat.waitTimes = append(stat.waitTimes, (shop.timeOfDay - Tills[i].queue.inQueue[0].Arrival))
 				if !Tills[i].queue.isBusy {
 					go processItems(i)
 				}
@@ -420,15 +408,14 @@ func processCustomers() {
 	}
 }
 
-
-func printstat(){
-    stat.averagecustomerwaitTime = getAvgTimes(stat.waitTimes)  
-    stat.averageproductspertrolley =   stat.totalProductsProcessed/len(stat.waitTimes)
-   print(stat.waitTimes)                  
-	print(stat.totalProductsProcessed)    
-	print(stat.averagecustomerwaitTime)    
-print(stat.averagecheckoututilisation)
-	print(stat.averageproductspertrolley) 
+func printstat() {
+	stat.averagecustomerwaitTime = getAvgTimes(stat.waitTimes)
+	stat.averageproductspertrolley = stat.totalProductsProcessed / len(stat.waitTimes)
+	print(stat.waitTimes)
+	print(stat.totalProductsProcessed)
+	print(stat.averagecustomerwaitTime)
+	print(stat.averagecheckoututilisation)
+	print(stat.averageproductspertrolley)
 	print(stat.Thenumberoflostcustomers)
 }
 
@@ -480,7 +467,7 @@ func main() {
 				customersInShop[len(customersInShop)-1] = e
 				customersInShop = customersInShop[:len(customersInShop)-1]
 			}
-		
+
 		}
 
 		//just testing sleep timer of 3 secs
@@ -489,10 +476,10 @@ func main() {
 		//openShop()
 
 	}
-	
-	stat.averagecustomerwaitTime = getAvgTimes(stat.waitTimes)  
-    stat.averageproductspertrolley =   stat.totalProductsProcessed/len(stat.waitTimes)
-    
-       printstat()
-	
+
+	stat.averagecustomerwaitTime = getAvgTimes(stat.waitTimes)
+	stat.averageproductspertrolley = stat.totalProductsProcessed / len(stat.waitTimes)
+
+	printstat()
+
 }
