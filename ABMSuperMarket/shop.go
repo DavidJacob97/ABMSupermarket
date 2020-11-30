@@ -48,7 +48,6 @@ type Customer struct {
 	hasMask  bool
 	items    int
 	arrival  int64
-	
 }
 
 var arrivingCustomers []Customer
@@ -96,7 +95,6 @@ func randomPause(max int) {
 	time.Sleep(time.Millisecond * time.Duration(rand.Intn(max*1000)))
 }
 
-
 func timeLoop() {
 for {
 	    shop.shopOpened=true
@@ -106,8 +104,6 @@ for {
 	     daysOfSimulation--
 	}
 }
-
-
 
 func setCovid() {
 	level := randomNumber(1, 5)
@@ -299,7 +295,6 @@ func processItems(i int) {
 	Tills[i].queue.inQueue = Tills[i].queue.inQueue[:len(Tills[i].queue.inQueue)-1]
 	Tills[i].queue.isBusy = false
 	mutex.Unlock()
-	
 }
 
 func getAvgItems(x []int) float64 {
