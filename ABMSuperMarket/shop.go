@@ -220,7 +220,7 @@ func makeTimestamp() int64 {
 
 func generateCustomers() {
 	for daysOfSimulation > 0 {
-		if len(arrivingCustomers) < shop.maxCapacity {
+		if len(arrivingCustomers) < (shop.maxCapacity * 2) {
 		r := rand.Intn(len(foreNames))
 		foreName := foreNames[r]
 
