@@ -231,7 +231,11 @@ func generateCustomers() {
 		name := foreName
 
 		customer := Customer{name: name}
-		customer.hasMask = true               //need some code in some chance
+		if randomNumber(1 , 60)%3 = 2{
+			customer.hasMask = false
+		} else {
+			customer.hasMask = true
+		}
 		customer.items = randomNumber(1, 200) //to be generated randomly
 		
 		mutex.Lock()
